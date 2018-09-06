@@ -2,8 +2,7 @@
 #define GEOC_ADAPTER_GRIDCURVE_H
 
 #include <DGtal/helpers/StdDefs.h>
-
-#include "DIPaCUS/derivates/Misc.h"
+#include <geoc/adapter/base/GeneralAdapter.h>
 
 namespace GEOC
 {
@@ -11,53 +10,40 @@ namespace GEOC
     {
         namespace GridCurve
         {
-            template<typename TEstimator>
-            class SymmetricCurvature
+            typedef DGtal::Z2i::Curve Curve;
+            typedef Curve::ConstIterator IteratorType;
+
+            template<template<typename> typename TEstimator, bool closedCurve>
+            class SymmetricCurvature:public GeneralAdapter::SymmetricCurvature<IteratorType,TEstimator,closedCurve>
             {
+            private:
+                typedef GeneralAdapter::SymmetricCurvature<IteratorType,TEstimator,closedCurve> BaseClass;
             public:
-                typedef DGtal::Z2i::Curve Curve;
-                typedef DGtal::Z2i::KSpace KSpace;
-
-                typedef DGtal::functors::SCellToIncidentPoints<KSpace> AdapterFunctor;
-
-                typedef DGtal::ConstRangeAdapter< Curve::ConstIterator,
-                        AdapterFunctor,
-                        AdapterFunctor::Output > SCellToPointRangeAdapter;
+                typedef typename BaseClass::EstimationValue EstimationValue;
             public:
-                SymmetricCurvature(Curve::ConstIterator begin,
-                                   Curve::ConstIterator end,
+                SymmetricCurvature(IteratorType begin,
+                                   IteratorType end,
                                    const KSpace& KImage,
-                                   std::vector<double>& estimations,
-                                   bool closedCurve);
-
+                                   std::vector<EstimationValue>& estimations):BaseClass(begin,end,KImage,estimations)
+                {}
             };
 
-            template<typename TEstimator>
-            class SymmetricTangent
+            template<template<typename> typename TEstimator, bool closedCurve>
+            class SymmetricTangent:public GeneralAdapter::SymmetricTangent<IteratorType,TEstimator,closedCurve>
             {
+            private:
+                typedef GeneralAdapter::SymmetricTangent<IteratorType,TEstimator,closedCurve> BaseClass;
             public:
-                typedef DGtal::Z2i::Curve Curve;
-                typedef DGtal::Z2i::KSpace KSpace;
-
-                typedef DGtal::functors::SCellToIncidentPoints<KSpace> AdapterFunctor;
-
-                typedef DGtal::ConstRangeAdapter< Curve::ConstIterator,
-                        AdapterFunctor,
-                        AdapterFunctor::Output > SCellToPointRangeAdapter;
-
-                typedef DGtal::PointVector<2,double> TangentVector;
-
+                typedef typename BaseClass::EstimationValue EstimationValue;
             public:
-                SymmetricTangent(Curve::ConstIterator begin,
-                                 Curve::ConstIterator end,
+                SymmetricTangent(IteratorType begin,
+                                 IteratorType end,
                                  const KSpace& KImage,
-                                 std::vector< TangentVector >& estimationsTangent,
-                                 bool closedCurve);
+                                 std::vector<EstimationValue>& estimations):BaseClass(begin,end,KImage,estimations)
+                {}
             };
         }
     }
 }
-
-#include "GridCurve.hpp"
 
 #endif //GEOC_ADAPTER_GRIDCURVE_H

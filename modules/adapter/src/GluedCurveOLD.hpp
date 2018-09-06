@@ -1,5 +1,3 @@
-#include "GluedCurve.h"
-
 using namespace GEOC::Adapter::GluedCurve;
 
 template<typename TEstimator>
@@ -14,10 +12,10 @@ SymmetricCurvature<TEstimator>::SymmetricCurvature(GCurve::GluedLinelsIterator b
                                          myFunctor);
 
     Curve negativeCurve;
-    DIPaCUS::Misc::InvertCurve(KImage,
-                               begin,
-                               end,
-                               negativeCurve);
+    DIPaCUS::Misc::InvertCurve<GCurve::GluedLinelsIterator>(KImage,
+                                                            begin,
+                                                            end,
+                                                            negativeCurve);
 
 
     CurveRangeAdapter rangeNegativeCurve(negativeCurve.begin(),
@@ -56,10 +54,10 @@ SymmetricTangent<TEstimator>::SymmetricTangent(GCurve::GluedLinelsIterator begin
                                          myFunctor);
 
     Curve negativeCurve;
-    DIPaCUS::Misc::InvertCurve(KImage,
-                               begin,
-                               end,
-                               negativeCurve);
+    DIPaCUS::Misc::InvertCurve<GCurve::GluedLinelsIterator>(KImage,
+                                                            begin,
+                                                            end,
+                                                            negativeCurve);
 
 
     CurveRangeAdapter rangeNegativeCurve(negativeCurve.begin(),

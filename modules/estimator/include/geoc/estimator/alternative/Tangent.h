@@ -25,7 +25,7 @@ namespace GEOC
                                   std::vector< TangentVector >& estimations);
 
 
-            }
+            };
         }
     }
 }

@@ -24,7 +24,7 @@ HDCACurvature<IteratorType>::HDCACurvature(IteratorType itb,
     SegmentComputer sc;
     SCEstimator f;
 
-    HDCASegmentComputer,SCEstimator> PessimistMDCACurvature(sc,f);
+    HDCAEstimator<SegmentComputer,SCEstimator> PessimistMDCACurvature(sc,f);
 
     PessimistMDCACurvature.init(1.0,itb,ite);
 

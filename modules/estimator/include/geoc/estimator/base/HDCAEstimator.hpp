@@ -114,7 +114,7 @@ HDCAEstimator<SegmentComputer, SCEstimator>
 template<typename SegmentComputer, typename SCEstimator>
 inline
 typename HDCAEstimator<SegmentComputer, SCEstimator>::Quantity
-PessimistMaximalSegmentEstimator<SegmentComputer, SCEstimator>
+HDCAEstimator<SegmentComputer, SCEstimator>
 ::eval(const ConstIterator &it) {
 
     throw DGtal::InputException("Not implemented");

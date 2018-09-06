@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(lib-geoc-adapter)
 
-add_library(geoc-adapter SHARED src/temp.cpp)
+add_library(geoc-adapter SHARED src/temp.cpp include/geoc/adapter/GridCurve.h)
 
 target_include_directories(geoc-adapter PRIVATE
         include
@@ -18,5 +18,5 @@ target_link_libraries(geoc-adapter
 
 
 install(DIRECTORY include
-        DESTINATION ${CMAKE_INSTALL_PREFIX}})
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
 

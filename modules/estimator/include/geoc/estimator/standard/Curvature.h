@@ -25,4 +25,6 @@ namespace GEOC
     }
 }
 
+#include "Curvature.hpp"
+
 #endif //GEOC_ESTIMATOR_STANDARD_CURVATURE_H

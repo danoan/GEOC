@@ -3,10 +3,12 @@
 
 #include "DGtal/geometry/curves/StabbingCircleComputer.h"
 #include <DGtal/geometry/curves/estimation/SegmentComputerEstimators.h>
-#include <geoc/estimator/base/DCALambdaEstimator.h>
 #include "DGtal/geometry/curves/estimation/MostCenteredMaximalSegmentEstimator.h"
 
 #include "DGtal/geometry/curves/estimation/LambdaMST2D.h"
+
+#include <geoc/estimator/base/DCALambdaEstimator.h>
+#include <geoc/estimator/base/HDCAEstimator.h>
 
 namespace GEOC
 {
@@ -21,7 +23,7 @@ namespace GEOC
                 typedef DGtal::CurvatureFromDCAEstimator<SegmentComputer, false> SCEstimator;
                 typedef DGtal::functors::Lambda64Function LambdaFunction;
 
-                typedef GEOC::Estimator::Base::DCALambdaEstimator LambdaMSE;
+                typedef GEOC::Estimator::Base::DCALambdaEstimator<SegmentComputer,SCEstimator,LambdaFunction> LambdaMSE;
 
                 DCALambdaCurvature(IteratorType itb,
                                    IteratorType ite,
@@ -42,5 +44,7 @@ namespace GEOC
         }
     }
 }
+
+#include "Curvature.hpp"
 
 #endif //GEOC_ESTIMATOR_ALTERNATIVE_

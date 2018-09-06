@@ -1,8 +1,8 @@
 #ifndef GEOC_ADAPTER_GLUEDCURVE_H
 #define GEOC_ADAPTER_GLUEDCURVE_H
 
+#include <geoc/adapter/base/GeneralAdapter.h>
 #include "gcurve/GluedLinelsIterator.h"
-#include "DIPaCUS/derivates/Misc.h"
 
 namespace GEOC
 {
@@ -10,76 +10,36 @@ namespace GEOC
     {
         namespace GluedCurve
         {
-            template<typename TEstimator>
-            class SymmetricCurvature
+            typedef GCurve::GluedLinelsIterator IteratorType;
+
+            template<template<typename> typename TEstimator, bool closedCurve>
+            class SymmetricCurvature:public GeneralAdapter::SymmetricCurvature<IteratorType,TEstimator,closedCurve>
             {
+            private:
+                typedef GeneralAdapter::SymmetricCurvature<IteratorType,TEstimator,closedCurve> BaseClass;
             public:
-                typedef DGtal::Z2i::Curve Curve;
-
-                typedef DGtal::functors::SCellToIncidentPoints<KSpace> AdapterFunctor;
-
-                typedef DGtal::ConstRangeAdapter< GCurve::GluedLinelsIterator,
-                        AdapterFunctor,
-                        AdapterFunctor::Output > GluedRangeAdapter;
-
-
-                typedef ConstRangeAdapter< Curve::ConstIterator,
-                        AdapterFunctor,
-                        AdapterFunctor::Output > CurveRangeAdapter;
-
+                typedef typename BaseClass::EstimationValue EstimationValue;
             public:
-                SymmetricCurvature(GCurve::GluedLinelsIterator begin,
-                                   GCurve::GluedLinelsIterator end,
+                SymmetricCurvature(IteratorType begin,
+                                   IteratorType end,
                                    const KSpace& KImage,
-                                   std::vector<double>& estimations);
+                                   std::vector<EstimationValue>& estimations):BaseClass(begin,end,KImage,estimations)
+                {}
             };
 
-            template<typename TEstimator>
-            class SymmetricTangent
+            template<template<typename> typename TEstimator, bool closedCurve>
+            class SymmetricTangent:public GeneralAdapter::SymmetricTangent<IteratorType,TEstimator,closedCurve>
             {
+            private:
+                typedef GeneralAdapter::SymmetricTangent<IteratorType,TEstimator,closedCurve> BaseClass;
             public:
-                typedef DGtal::Z2i::Curve Curve;
-
-                typedef DGtal::functors::SCellToIncidentPoints<KSpace> AdapterFunctor;
-
-                typedef DGtal::ConstRangeAdapter< GCurve::GluedLinelsIterator,
-                        AdapterFunctor,
-                        AdapterFunctor::Output > GluedRangeAdapter;
-
-
-                typedef ConstRangeAdapter< Curve::ConstIterator,
-                        AdapterFunctor,
-                        AdapterFunctor::Output > CurveRangeAdapter;
-
-                typedef DGtal::PointVector<2,double> TangentVector;
-
-                SymmetricTangent(GCurve::GluedLinelsIterator begin,
-                                 GCurve::GluedLinelsIterator end,
+                typedef typename BaseClass::EstimationValue EstimationValue;
+            public:
+                SymmetricTangent(IteratorType begin,
+                                 IteratorType end,
                                  const KSpace& KImage,
-                                 std::vector< TangentVector >& estimations);
-            };
-
-            template<typename TTangentAdapter>
-            class ProjectedLength
-            {
-                typedef typename TTangentAdapter::TangentVector TangentVector;
-
-                ProjectedLength(GCurve::GluedLinelsIterator begin,
-                                GCurve::GluedLinelsIterator end,
-                                const KSpace& KImage,
-                                std::vector< double >& estimations);
-            };
-
-
-            template<typename TTangentAdapter>
-            class SinCosLength
-            {
-                typedef typename TTangentAdapter::TangentVector TangentVector;
-
-                SinCosLength(GCurve::GluedLinelsIterator begin,
-                             GCurve::GluedLinelsIterator end,
-                             const KSpace &KImage,
-                             std::vector<double> &estimations);
+                                 std::vector<EstimationValue>& estimations):BaseClass(begin,end,KImage,estimations)
+                {}
             };
 
         }
