@@ -3,9 +3,9 @@ project(lib-geoc-estimators)
 
 find_package(DGtal REQUIRED)
 
-add_library(geoc-estimator SHARED src/temp.cpp)
+add_library(geoc-estimator INTERFACE)
 
-target_include_directories(geoc-estimator PRIVATE
+target_include_directories(geoc-estimator INTERFACE
         include
         ../../ext/include
         ${DGTAL_INCLUDE_DIRS})

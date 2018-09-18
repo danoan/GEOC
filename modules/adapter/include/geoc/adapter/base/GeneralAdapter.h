@@ -18,7 +18,7 @@ namespace GEOC
             typedef DGtal::Z2i::Curve Curve;
             typedef DGtal::Z2i::KSpace KSpace;
 
-            template< typename TIterator, template<typename> typename TEstimator, bool closedCurve >
+            template< typename TIterator, template<typename> class TEstimator, bool closedCurve >
             class IdentityRangeCurvature
             {
             public:
@@ -49,7 +49,7 @@ namespace GEOC
             };
 
 
-            template< typename TIterator, template<typename> typename TEstimator, bool closedCurve >
+            template< typename TIterator, template<typename> class TEstimator, bool closedCurve >
             class SymmetricCurvature
             {
             public:
@@ -70,7 +70,7 @@ namespace GEOC
 
             };
 
-            template<typename TIterator, template<typename> typename TEstimator, bool closedCurve>
+            template<typename TIterator, template<typename> class TEstimator, bool closedCurve>
             class SymmetricTangent
             {
             public:

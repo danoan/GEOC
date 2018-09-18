@@ -3,9 +3,9 @@ project(lib-geoc-adapter)
 
 find_package(DGtal REQUIRED)
 
-add_library(geoc-adapter SHARED src/temp.cpp)
+add_library(geoc-adapter INTERFACE)
 
-target_include_directories(geoc-adapter PRIVATE
+target_include_directories(geoc-adapter INTERFACE
         include
         ../estimator/include
         ../../ext/include

@@ -12,7 +12,7 @@ namespace GEOC
         {
             typedef GCurve::GluedLinelsIterator IteratorType;
 
-            template<template<typename> typename TEstimator, bool closedCurve>
+            template<template<typename> class TEstimator, bool closedCurve>
             class SymmetricCurvature:public GeneralAdapter::SymmetricCurvature<IteratorType,TEstimator,closedCurve>
             {
             private:
@@ -27,7 +27,7 @@ namespace GEOC
                 {}
             };
 
-            template<template<typename> typename TEstimator, bool closedCurve>
+            template<template<typename> class TEstimator, bool closedCurve>
             class SymmetricTangent:public GeneralAdapter::SymmetricTangent<IteratorType,TEstimator,closedCurve>
             {
             private:

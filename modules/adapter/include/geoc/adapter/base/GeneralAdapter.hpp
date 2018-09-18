@@ -2,9 +2,9 @@
 
 using namespace GEOC::Adapter::GeneralAdapter;
 
-template< typename TIterator, template<typename> typename TEstimator, bool closedCurve >
-IdentityRangeCurvature< TIterator, TEstimator, closedCurve>::IdentityRangeCurvature(TIterator begin,
-                                                              TIterator end,
+template< typename TIterator, template<typename> class TEstimator, bool closedCurve >
+IdentityRangeCurvature< TIterator, TEstimator, closedCurve>::IdentityRangeCurvature(MyIterator begin,
+                                                              MyIterator end,
                                                               const KSpace& KImage,
                                                               std::vector<EstimationValue>& estimations)
 {
@@ -18,7 +18,7 @@ IdentityRangeCurvature< TIterator, TEstimator, closedCurve>::IdentityRangeCurvat
 
 };
 
-template< typename TIterator, template<typename> typename TEstimator, bool closedCurve >
+template< typename TIterator, template<typename> class TEstimator, bool closedCurve >
 SymmetricCurvature< TIterator, TEstimator, closedCurve>::SymmetricCurvature(TIterator begin,
                                                                             TIterator end,
                                                                             const KSpace& KImage,
@@ -57,7 +57,7 @@ SymmetricCurvature< TIterator, TEstimator, closedCurve>::SymmetricCurvature(TIte
     }while(ip<=nL);
 };
 
-template<typename TIterator, template<typename> typename TEstimator, bool closedCurve>
+template<typename TIterator, template<typename> class TEstimator, bool closedCurve>
 SymmetricTangent<TIterator, TEstimator, closedCurve>::SymmetricTangent(TIterator begin,
                                                                        TIterator end,
                                                                        const KSpace& KImage,

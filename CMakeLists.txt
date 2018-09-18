@@ -14,3 +14,4 @@ link_directories(${EXTRA_LINK_DIR}
 
 add_subdirectory(modules/estimator)
 add_subdirectory(modules/adapter)
+add_subdirectory(modules/test)

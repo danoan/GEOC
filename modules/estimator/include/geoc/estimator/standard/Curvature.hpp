@@ -1,4 +1,3 @@
-#include <DIPaCUS/derivates/Misc.h>
 #include "geoc/estimator/standard/Curvature.h"
 
 using namespace GEOC::Estimator::Standard;
@@ -20,62 +19,33 @@ MDCACurvature<IteratorType>::MDCACurvature(IteratorType itb,
 template<typename IteratorType>
 IICurvature<IteratorType>::IICurvature(IteratorType itb,
                                        IteratorType ite,
-                                       std::vector<double>& estimations)
+                                       std::vector<double>& estimations,
+                                       bool ccw)
 {
-    typedef DGtal::SetOfSurfels<KSpace> DigitalSurfelContainer;
-    typedef DGtal::DigitalSurface< DigitalSurfelContainer > MyDigitalSurface;
+    typedef DGtal::Z2i::Domain Domain;
 
+    typename DIPaCUS::Properties::CurveBoundingBox<IteratorType>::BoundingBox bb;
+    DIPaCUS::Properties::CurveBoundingBox<IteratorType>(bb,itb,ite);
 
-    auto it = itb;
-    KSpace::Point minKP,maxKP,currP;
-    minKP = it->preCell().coordinates;
-    maxKP = minKP;
-    do{
-        currP = it->preCell().coordinates;
+    Domain domain(bb.lb + DGtal::Z2i::Point(-2,-2),bb.ub+ DGtal::Z2i::Point(2,2));
+    DigitalSet ds(domain);
+    ds.clear();
 
-        minKP[0] = currP[0] < minKP[0]?currP[0]:minKP[0];
-        minKP[1] = currP[1] < minKP[1]?currP[1]:minKP[1];
-
-        maxKP[0] = currP[0] > minKP[0]?currP[0]:maxKP[0];
-        maxKP[1] = currP[1] > minKP[1]?currP[1]:maxKP[1];
-
-        ++it;
-    }while(it!=ite);
-
-    minKP/=2;
-    maxKP/=2;
+    DIPaCUS::Misc::CompactSetFromClosedCurve<IteratorType>(ds,itb,ite,ccw);
 
     KSpace KImage;
-    DGtal::Z2i::Domain domain(minKP,maxKP);
-    KImage.init(minKP,maxKP,true);
-
-    DigitalSet ds(domain);
-    DigitalSet boundary(domain);
-    KSpace::SCell interiorPixel = KImage.sIndirectIncident(*itb, KImage.sOrthDir(*itb));
-
-    it = itb;
-    do{
-        boundary.insert( KImage.sCoords( KImage.sIndirectIncident(*it,KImage.sOrthDir(*it)) ) );
-        ++it;
-    }while(it!=ite);
-
-    DIPaCUS::Misc::FillInterior(ds,KImage.sCoords(interiorPixel),boundary);
-
-
-    DigitalSurfelContainer dsc(KImage,DGtal::SurfelAdjacency<KSpace::dimension>( true ));
-    KSpace::SCell surfelModel = KImage.sCell( KSpace::Point(1,1), true );
-    for(auto it=ds.begin();it!=ds.end();++it)
-    {
-        dsc.surfelSet().insert( KImage.sCell(*it,surfelModel) );
-    }
-
-    MyDigitalSurface digSurf(dsc);
-
-    /// Construction of the shape + digitalization
-    double h = 1.0;
+    KImage.init(bb.lb,bb.ub,true);
 
 
 
+
+    typedef DGtal::LightImplicitDigitalSurface< KSpace, DigitalSet > LightImplicitDigSurface;
+    typedef DGtal::DigitalSurface< LightImplicitDigSurface > MyDigitalSurface;
+
+    DGtal::SurfelAdjacency<KSpace::dimension> SAdj( true );
+    KSpace::Surfel bel = DGtal::Surfaces<KSpace>::findABel( KImage, ds, 100000 );
+    LightImplicitDigSurface LightImplDigSurf( KImage, ds, SAdj, bel );
+    MyDigitalSurface digSurf( LightImplDigSurf );
 
     typedef DGtal::DepthFirstVisitor< MyDigitalSurface > Visitor;
     typedef DGtal::GraphVisitorRange< Visitor > VisitorRange;
@@ -85,8 +55,14 @@ IICurvature<IteratorType>::IICurvature(IteratorType itb,
     SurfelConstIterator abegin = range.begin();
     SurfelConstIterator aend = range.end();
 
-    /// Integral Invariant stuff
-    //! [IntegralInvariantUsage]
+
+
+
+
+
+
+    double h = 1.0;
+
     double re_convolution_kernel = 3.0; // Euclidean radius of the convolution kernel. Set by user.
 
     typedef DGtal::functors::IICurvatureFunctor<DGtal::Z2i::Space> MyIICurvatureFunctor;
@@ -99,7 +75,7 @@ IICurvature<IteratorType>::IICurvature(IteratorType itb,
     MyIICurvatureEstimator curvatureEstimator( curvatureFunctor );
     curvatureEstimator.attach( KImage, ds ); /// Setting a KSpace and a predicate on the object to evaluate
     curvatureEstimator.setParams( re_convolution_kernel/h ); /// Setting the digital radius of the convolution kernel
-    curvatureEstimator.init( h, abegin, aend ); /// Initialisation for a given h
+    curvatureEstimator.init( h, abegin, aend); /// Initialisation for a given h
 
     std::vector< Value > results;
     std::back_insert_iterator< std::vector< Value > > resultsIt( results ); /// output iterator for results of Integral Invariant curvature computation

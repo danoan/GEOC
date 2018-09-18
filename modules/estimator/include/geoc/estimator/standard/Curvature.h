@@ -2,6 +2,10 @@
 #define GEOC_ESTIMATOR_STANDARD_CURVATURE_H
 
 
+#include <DIPaCUS/derivates/Misc.h>
+#include <DIPaCUS/components/Properties.h>
+
+#include "DGtal/topology/LightImplicitDigitalSurface.h"
 #include "DGtal/geometry/curves/StabbingCircleComputer.h"
 #include <DGtal/geometry/curves/estimation/SegmentComputerEstimators.h>
 #include "DGtal/geometry/curves/estimation/MostCenteredMaximalSegmentEstimator.h"
@@ -31,7 +35,6 @@ namespace GEOC
                               std::vector<double>& estimations);
             };
 
-            //It is expected a LinelIterator
             template<typename IteratorType>
             struct IICurvature
             {
@@ -41,9 +44,11 @@ namespace GEOC
                 typedef DGtal::IntegralInvariantVolumeEstimator< KSpace, DigitalSet, MyIICurvatureFunctor > MyIICurvatureEstimator;
                 typedef MyIICurvatureFunctor::Value Value;
 
+                //It is expected a counter-clockwise curve.
                 IICurvature(IteratorType itb,
-                              IteratorType ite,
-                              std::vector<double>& estimations);
+                            IteratorType ite,
+                            std::vector<double>& estimations,
+                            bool ccw=true);
             };
         }
     }

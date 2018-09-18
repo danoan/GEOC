@@ -7,7 +7,7 @@ namespace GEOC
 {
     namespace Adapter
     {
-        template< typename TIterator, template<typename> typename TEstimator, typename TAdapterFunctor, typename TValue, bool closedCurve >
+        template< typename TIterator, template<typename> class TEstimator, typename TAdapterFunctor, typename TValue, bool closedCurve >
         class EstimatorDeducer
         {
         public:
@@ -19,11 +19,11 @@ namespace GEOC
                     typename AdapterFunctor::Output > RangeAdapter;
 
         public:
-            EstimatorDeducer(const RangeAdapter& range,
+            EstimatorDeducer(RangeAdapter range,
                              std::vector<TValue>& estimations);
         };
 
-        template< typename TIterator, template<typename> typename TEstimator, typename TAdapterFunctor, typename TValue>
+        template< typename TIterator, template<typename> class TEstimator, typename TAdapterFunctor, typename TValue>
         class EstimatorDeducer<TIterator,TEstimator,TAdapterFunctor,TValue,false>
         {
         public:
@@ -38,14 +38,14 @@ namespace GEOC
             typedef TEstimator<RangeIterator> MyEstimator;
 
         public:
-            EstimatorDeducer(const RangeAdapter& range,
+            EstimatorDeducer(RangeAdapter range,
                               std::vector<TValue>& estimations)
             {
                 MyEstimator(range.begin(),range.end(),estimations);
             }
         };
 
-        template< typename TIterator, template<typename> typename TEstimator, typename TAdapterFunctor, typename TValue>
+        template< typename TIterator, template<typename> class TEstimator, typename TAdapterFunctor, typename TValue>
         class EstimatorDeducer<TIterator,TEstimator,TAdapterFunctor,TValue,true>
         {
         public:
@@ -59,12 +59,12 @@ namespace GEOC
             typedef typename RangeAdapter::ConstCirculator RangeCirculator;
             typedef TEstimator<RangeCirculator> MyEstimator;
 
-        public:
-            EstimatorDeducer(const RangeAdapter& range,
+            EstimatorDeducer(RangeAdapter range,
                              std::vector<TValue>& estimations)
             {
                 MyEstimator(range.c(),range.c(),estimations);
             }
+        public:
         };
     }
 }
