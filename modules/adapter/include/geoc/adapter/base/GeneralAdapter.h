@@ -18,6 +18,36 @@ namespace GEOC
             typedef DGtal::Z2i::Curve Curve;
             typedef DGtal::Z2i::KSpace KSpace;
 
+            template< typename TIterator, template<typename> typename TEstimator, bool closedCurve >
+            class IdentityRangeCurvature
+            {
+            public:
+                typedef TIterator MyIterator;
+                typedef double EstimationValue;
+
+                struct AdapterFunctor
+                {
+                    typedef Curve::SCell Output;
+
+                    inline
+                    Output operator()(const Output& aT) const
+                    {
+                        return aT;
+                    }
+                };
+
+                typedef EstimatorDeducer<TIterator,TEstimator,AdapterFunctor,EstimationValue,closedCurve> MyEstimator;
+                typedef typename MyEstimator::RangeAdapter MyRangeAdapter;
+            public:
+                IdentityRangeCurvature(){}
+
+                IdentityRangeCurvature(MyIterator begin,
+                                   MyIterator end,
+                                   const KSpace& KImage,
+                                   std::vector<EstimationValue>& estimations);
+
+            };
+
 
             template< typename TIterator, template<typename> typename TEstimator, bool closedCurve >
             class SymmetricCurvature

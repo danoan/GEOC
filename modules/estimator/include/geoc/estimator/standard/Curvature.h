@@ -1,9 +1,18 @@
 #ifndef GEOC_ESTIMATOR_STANDARD_CURVATURE_H
 #define GEOC_ESTIMATOR_STANDARD_CURVATURE_H
 
+
 #include "DGtal/geometry/curves/StabbingCircleComputer.h"
 #include <DGtal/geometry/curves/estimation/SegmentComputerEstimators.h>
 #include "DGtal/geometry/curves/estimation/MostCenteredMaximalSegmentEstimator.h"
+
+#include "DGtal/geometry/surfaces/estimation/IIGeometricFunctors.h"
+#include "DGtal/topology/SetOfSurfels.h"
+#include "DGtal/geometry/surfaces/estimation/IntegralInvariantVolumeEstimator.h"
+#include "DGtal/topology/DigitalSurface.h"
+#include "DGtal/topology/ExplicitDigitalSurface.h"
+#include "DGtal/graph/DepthFirstVisitor.h"
+#include "DGtal/graph/GraphVisitorRange.h"
 
 namespace GEOC
 {
@@ -18,6 +27,21 @@ namespace GEOC
                 typedef DGtal::CurvatureFromDCAEstimator<SegmentComputer, false> SCEstimator;
 
                 MDCACurvature(IteratorType itb,
+                              IteratorType ite,
+                              std::vector<double>& estimations);
+            };
+
+            //It is expected a LinelIterator
+            template<typename IteratorType>
+            struct IICurvature
+            {
+                typedef DGtal::Z2i::KSpace KSpace;
+                typedef DGtal::Z2i::DigitalSet DigitalSet;
+                typedef DGtal::functors::IICurvatureFunctor<DGtal::Z2i::Space> MyIICurvatureFunctor;
+                typedef DGtal::IntegralInvariantVolumeEstimator< KSpace, DigitalSet, MyIICurvatureFunctor > MyIICurvatureEstimator;
+                typedef MyIICurvatureFunctor::Value Value;
+
+                IICurvature(IteratorType itb,
                               IteratorType ite,
                               std::vector<double>& estimations);
             };

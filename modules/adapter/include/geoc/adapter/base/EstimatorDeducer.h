@@ -19,10 +19,8 @@ namespace GEOC
                     typename AdapterFunctor::Output > RangeAdapter;
 
         public:
-            EstimatorDeducer(const RangeAdapter& rpos,
-                             const RangeAdapter& rneg,
-                             std::vector<TValue>& posEstimations,
-                             std::vector<TValue>& negEstimations);
+            EstimatorDeducer(const RangeAdapter& range,
+                             std::vector<TValue>& estimations);
         };
 
         template< typename TIterator, template<typename> typename TEstimator, typename TAdapterFunctor, typename TValue>
@@ -40,13 +38,10 @@ namespace GEOC
             typedef TEstimator<RangeIterator> MyEstimator;
 
         public:
-            EstimatorDeducer(const RangeAdapter& rpos,
-                             const RangeAdapter& rneg,
-                             std::vector<TValue>& posEstimations,
-                             std::vector<TValue>& negEstimations)
+            EstimatorDeducer(const RangeAdapter& range,
+                              std::vector<TValue>& estimations)
             {
-                MyEstimator(rpos.begin(),rpos.end(),posEstimations);
-                MyEstimator(rneg.begin(),rneg.end(),negEstimations);
+                MyEstimator(range.begin(),range.end(),estimations);
             }
         };
 
@@ -65,13 +60,10 @@ namespace GEOC
             typedef TEstimator<RangeCirculator> MyEstimator;
 
         public:
-            EstimatorDeducer(const RangeAdapter& rpos,
-                             const RangeAdapter& rneg,
-                             std::vector<TValue>& posEstimations,
-                             std::vector<TValue>& negEstimations)
+            EstimatorDeducer(const RangeAdapter& range,
+                             std::vector<TValue>& estimations)
             {
-                MyEstimator(rpos.c(),rpos.c(),posEstimations);
-                MyEstimator(rneg.c(),rneg.c(),negEstimations);
+                MyEstimator(range.c(),range.c(),estimations);
             }
         };
     }
