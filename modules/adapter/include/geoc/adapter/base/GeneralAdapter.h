@@ -42,9 +42,9 @@ namespace GEOC
                 IdentityRangeCurvature(){}
 
                 IdentityRangeCurvature(MyIterator begin,
-                                   MyIterator end,
-                                   const KSpace& KImage,
-                                   std::vector<EstimationValue>& estimations);
+                                       MyIterator end,
+                                       std::vector<EstimationValue>& estimations,
+                                       double h);
 
             };
 
@@ -66,7 +66,8 @@ namespace GEOC
                 SymmetricCurvature(MyIterator begin,
                                    MyIterator end,
                                    const KSpace& KImage,
-                                   std::vector<EstimationValue>& estimations);
+                                   std::vector<EstimationValue>& estimations,
+                                   double h);
 
             };
 
@@ -88,7 +89,8 @@ namespace GEOC
                 SymmetricTangent(MyIterator begin,
                                  MyIterator end,
                                  const KSpace& KImage,
-                                 std::vector< EstimationValue >& estimationsTangent);
+                                 std::vector< EstimationValue >& estimationsTangent,
+                                 double h);
             };
 
             template<typename TTangentAdapter>
@@ -106,7 +108,8 @@ namespace GEOC
                 ProjectedLength(MyIterator begin,
                                 MyIterator end,
                                 const KSpace& KImage,
-                                std::vector< EstimationValue >& estimations);
+                                std::vector< EstimationValue >& estimations,
+                                double h);
             };
 
 
@@ -125,7 +128,8 @@ namespace GEOC
                 SinCosLength(MyIterator begin,
                              MyIterator end,
                              const KSpace &KImage,
-                             std::vector<EstimationValue> &estimations);
+                             std::vector<EstimationValue> &estimations,
+                             double h);
             };
         }
     }

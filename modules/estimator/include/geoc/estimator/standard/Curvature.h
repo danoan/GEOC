@@ -32,7 +32,8 @@ namespace GEOC
 
                 MDCACurvature(IteratorType itb,
                               IteratorType ite,
-                              std::vector<double>& estimations);
+                              std::vector<double>& estimations,
+                              double h);
             };
 
             template<typename IteratorType>
@@ -40,14 +41,17 @@ namespace GEOC
             {
                 typedef DGtal::Z2i::KSpace KSpace;
                 typedef DGtal::Z2i::DigitalSet DigitalSet;
+                typedef DGtal::Z2i::Domain Domain;
                 typedef DGtal::functors::IICurvatureFunctor<DGtal::Z2i::Space> MyIICurvatureFunctor;
                 typedef DGtal::IntegralInvariantVolumeEstimator< KSpace, DigitalSet, MyIICurvatureFunctor > MyIICurvatureEstimator;
-                typedef MyIICurvatureFunctor::Value Value;
+
+                typedef typename DIPaCUS::Properties::CurveBoundingBox<IteratorType>::BoundingBox BoundingBox;
 
                 //It is expected a counter-clockwise curve.
                 IICurvature(IteratorType itb,
                             IteratorType ite,
                             std::vector<double>& estimations,
+                            double h,
                             bool ccw=true);
             };
         }

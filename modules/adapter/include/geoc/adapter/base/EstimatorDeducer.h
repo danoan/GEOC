@@ -20,7 +20,8 @@ namespace GEOC
 
         public:
             EstimatorDeducer(RangeAdapter range,
-                             std::vector<TValue>& estimations);
+                             std::vector<TValue>& estimations,
+                             double h);
         };
 
         template< typename TIterator, template<typename> class TEstimator, typename TAdapterFunctor, typename TValue>
@@ -39,9 +40,10 @@ namespace GEOC
 
         public:
             EstimatorDeducer(RangeAdapter range,
-                              std::vector<TValue>& estimations)
+                             std::vector<TValue>& estimations,
+                             double h)
             {
-                MyEstimator(range.begin(),range.end(),estimations);
+                MyEstimator(range.begin(),range.end(),estimations,h);
             }
         };
 
@@ -60,9 +62,10 @@ namespace GEOC
             typedef TEstimator<RangeCirculator> MyEstimator;
 
             EstimatorDeducer(RangeAdapter range,
-                             std::vector<TValue>& estimations)
+                             std::vector<TValue>& estimations,
+                             double h)
             {
-                MyEstimator(range.c(),range.c(),estimations);
+                MyEstimator(range.c(),range.c(),estimations,h);
             }
         public:
         };

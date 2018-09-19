@@ -23,8 +23,8 @@ namespace GEOC
             public:
                 IdentityRangeCurvature(IteratorType begin,
                                        IteratorType end,
-                                       const KSpace& KImage,
-                                       std::vector<EstimationValue>& estimations):BaseClass(begin,end,KImage,estimations)
+                                       std::vector<EstimationValue>& estimations,
+                                       double h):BaseClass(begin,end,estimations,h)
                 {}
 
             };
@@ -40,7 +40,8 @@ namespace GEOC
                 SymmetricCurvature(IteratorType begin,
                                    IteratorType end,
                                    const KSpace& KImage,
-                                   std::vector<EstimationValue>& estimations):BaseClass(begin,end,KImage,estimations)
+                                   std::vector<EstimationValue>& estimations,
+                                   double h):BaseClass(begin,end,KImage,estimations,h)
                 {}
             };
 
@@ -55,7 +56,8 @@ namespace GEOC
                 SymmetricTangent(IteratorType begin,
                                  IteratorType end,
                                  const KSpace& KImage,
-                                 std::vector<EstimationValue>& estimations):BaseClass(begin,end,KImage,estimations)
+                                 std::vector<EstimationValue>& estimations,
+                                 double h):BaseClass(begin,end,KImage,estimations,h)
                 {}
             };
         }

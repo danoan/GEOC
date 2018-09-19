@@ -7,6 +7,8 @@ project(geoc)
 #EXTRA_LINK_DIR: extra link directories
 #BUILD_PATH: location of build files
 
+message(${EXTRA_LINK_DIR})
+
 link_directories(${EXTRA_LINK_DIR}
         ${BUILD_PATH}/modules/estimator
         ${BUILD_PATH}/modules/adapter

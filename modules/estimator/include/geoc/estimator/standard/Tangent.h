@@ -22,7 +22,8 @@ namespace GEOC
 
                 MDSSTangent(IteratorType itb,
                             IteratorType ite,
-                            std::vector< TangentVector >& estimations);
+                            std::vector< TangentVector >& estimations,
+                            double h);
             };
         }
     }

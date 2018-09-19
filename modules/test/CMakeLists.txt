@@ -1,17 +1,18 @@
 cmake_minimum_required(VERSION 3.2)
-project(test-geoc-estimator)
+project(test-geoc)
 
 find_package(DGtal REQUIRED)
 
-add_executable(testEstimator testEstimator.cpp)
+add_executable(testGeoc testGeoc.cpp src/testConvergence.cpp)
 
-target_include_directories(testEstimator PRIVATE
+target_include_directories(testGeoc PRIVATE
+        include
         ../adapter/include
         ../estimator/include
         ../../ext/include
         ${DGTAL_INCLUDE_DIRS})
 
-target_link_libraries(testEstimator
+target_link_libraries(testGeoc
         -ldipacus-derivates
         -ldipacus-components
         -ldipacus-base
