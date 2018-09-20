@@ -43,6 +43,7 @@ namespace GEOC
 
                 IdentityRangeCurvature(MyIterator begin,
                                        MyIterator end,
+                                       const KSpace& KImage,
                                        std::vector<EstimationValue>& estimations,
                                        double h);
 

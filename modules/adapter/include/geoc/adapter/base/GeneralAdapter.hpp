@@ -5,6 +5,7 @@ using namespace GEOC::Adapter::GeneralAdapter;
 template< typename TIterator, template<typename> class TEstimator, bool closedCurve >
 IdentityRangeCurvature< TIterator, TEstimator, closedCurve>::IdentityRangeCurvature(MyIterator begin,
                                                                                     MyIterator end,
+                                                                                    const KSpace& KImage,
                                                                                     std::vector<EstimationValue>& estimations,
                                                                                     double h)
 {
@@ -122,7 +123,9 @@ ProjectedLength<TTangentAdapter>::ProjectedLength(MyIterator begin,
         pSource = KImage.sCoords( KImage.sIndirectIncident(*it,*KImage.sDirs(*it)) );
 
         scellVector = pTarget-pSource;
-        estimations.push_back( fabs( ( tangentEstimations[i].dot(scellVector) ) ) );
+
+        //Scale by h because the tangent is normalized
+        estimations.push_back( h*fabs( ( tangentEstimations[i].dot(scellVector) ) ) );
 
         ++i;
         ++it;

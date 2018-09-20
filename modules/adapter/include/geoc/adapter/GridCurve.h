@@ -23,8 +23,9 @@ namespace GEOC
             public:
                 IdentityRangeCurvature(IteratorType begin,
                                        IteratorType end,
+                                       const KSpace& KImage,
                                        std::vector<EstimationValue>& estimations,
-                                       double h):BaseClass(begin,end,estimations,h)
+                                       double h):BaseClass(begin,end,KImage,estimations,h)
                 {}
 
             };

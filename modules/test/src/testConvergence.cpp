@@ -55,19 +55,22 @@ TestConvergence::TestConvergence(double radius, double h)
     ClosedSymmetricCurvature CSC(c.begin(),c.end(),KImage,estimationsMDCA,h);
 
     std::vector<double> estimationsII;
-    OpenIICurvature CIIC(c.begin(),c.end(),estimationsII,h);
+    OpenIICurvature CIIC(c.begin(),c.end(),KImage,estimationsII,h);
 
 
     double mdca,ii;
     assert(estimationsII.size()==estimationsMDCA.size());
 
+    double maxDiff=0;
     if(verbose)
     {
         for(int i=0;i<estimationsII.size();++i)
         {
             mdca = estimationsMDCA[i];
             ii = estimationsII[i];
-            std::cout << "MDCA: " << mdca << "\tII: " << ii << "\tDIFF: " << fabs(mdca-ii) << std::endl;
+            maxDiff = fabs(mdca-ii)>maxDiff?fabs(mdca-ii):maxDiff;
         }
+
+        std::cout << "Max Diff: " << maxDiff << std::endl;
     }
 }
