@@ -27,14 +27,15 @@ IICurvature<IteratorType>::IICurvature(IteratorType itb,
     BoundingBox bb;
     DIPaCUS::Properties::CurveBoundingBox<IteratorType>(bb,itb,ite);
 
-    Domain domain(bb.lb + DGtal::Z2i::Point(-2,-2),bb.ub+ DGtal::Z2i::Point(2,2));
-    DigitalSet ds(domain);
+    Domain tempDomain(bb.lb + DGtal::Z2i::Point(-2,-2),bb.ub+ DGtal::Z2i::Point(2,2));
+    DigitalSet tempDS(tempDomain);
+
+
+    DIPaCUS::Misc::CompactSetFromClosedCurve<IteratorType>(tempDS,itb,ite,ccw);
+    DigitalSet ds = DIPaCUS::Transform::CenterDigitalSetAtOrigin(tempDS);
+
     KSpace KImage;
-    KImage.init(domain.lowerBound(),domain.upperBound(),true);
-
-
-
-    DIPaCUS::Misc::CompactSetFromClosedCurve<IteratorType>(ds,itb,ite,ccw);
+    KImage.init(ds.domain().lowerBound(),ds.domain().upperBound(),true);
 
     double re_convolution_kernel = 3.0; // Euclidean radius of the convolution kernel. Set by user.
 

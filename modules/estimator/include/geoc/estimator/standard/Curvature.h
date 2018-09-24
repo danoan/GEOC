@@ -4,6 +4,7 @@
 
 #include <DIPaCUS/derivates/Misc.h>
 #include <DIPaCUS/components/Properties.h>
+#include <DIPaCUS/components/Transform.h>
 
 #include "DGtal/topology/LightImplicitDigitalSurface.h"
 #include "DGtal/geometry/curves/StabbingCircleComputer.h"
