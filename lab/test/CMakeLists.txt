@@ -7,8 +7,8 @@ add_executable(testGeoc testGeoc.cpp src/testConvergence.cpp)
 
 target_include_directories(testGeoc PRIVATE
         include
-        ../adapter/include
-        ../estimator/include
+        ../../modules/adapter/include
+        ../../modules/estimator/include
         ../../ext/include
         ${DGTAL_INCLUDE_DIRS})
 

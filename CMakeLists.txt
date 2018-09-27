@@ -7,7 +7,7 @@ project(geoc)
 #EXTRA_LINK_DIR: extra link directories
 #BUILD_PATH: location of build files
 
-message(${EXTRA_LINK_DIR})
+set(BUILD_TEST OFF CACHE BOOL "Build tests.")
 
 link_directories(${EXTRA_LINK_DIR}
         ${BUILD_PATH}/modules/estimator
@@ -16,4 +16,7 @@ link_directories(${EXTRA_LINK_DIR}
 
 add_subdirectory(modules/estimator)
 add_subdirectory(modules/adapter)
-add_subdirectory(modules/test)
+
+if (${BUILD_TEST})
+    add_subdirectory(lab/test)
+endif()
