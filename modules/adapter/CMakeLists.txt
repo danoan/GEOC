@@ -7,8 +7,9 @@ add_library(geoc-adapter INTERFACE)
 
 target_include_directories(geoc-adapter INTERFACE
         include
-        ../estimator/include
-        ../../ext/include
+        ${CMAKE_SOURCE_DIR}/estimator/include
+        ${DIPACUS_INCLUDE_DIRS}
+        ${GCURVE_INCLUDE_DIRS}
         ${DGTAL_INCLUDE_DIRS})
 
 

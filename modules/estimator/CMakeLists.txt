@@ -7,7 +7,8 @@ add_library(geoc-estimator INTERFACE)
 
 target_include_directories(geoc-estimator INTERFACE
         include
-        ../../ext/include
+        ${DIPACUS_INCLUDE_DIRS}
+        ${GCURVE_INCLUDE_DIRS}
         ${DGTAL_INCLUDE_DIRS})
 
 

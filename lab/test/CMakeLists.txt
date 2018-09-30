@@ -7,9 +7,10 @@ add_executable(testGeoc testGeoc.cpp src/testConvergence.cpp)
 
 target_include_directories(testGeoc PRIVATE
         include
-        ../../modules/adapter/include
-        ../../modules/estimator/include
-        ../../ext/include
+        ${CMAKE_SOURCE_DIR}/modules/adapter/include
+        ${CMAKE_SOURCE_DIR}/modules/estimator/include
+        ${DIPACUS_INCLUDE_DIRS}
+        ${GCURVE_INCLUDE_DIRS}
         ${DGTAL_INCLUDE_DIRS})
 
 target_link_libraries(testGeoc
