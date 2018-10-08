@@ -1,7 +1,6 @@
 #ifndef GEOC_ESTIMATOR_STANDARD_CURVATURE_H
 #define GEOC_ESTIMATOR_STANDARD_CURVATURE_H
 
-
 #include <DIPaCUS/derivates/Misc.h>
 #include <DIPaCUS/components/Properties.h>
 #include <DIPaCUS/components/Transform.h>

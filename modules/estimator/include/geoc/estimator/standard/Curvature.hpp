@@ -27,12 +27,17 @@ IICurvature<IteratorType>::IICurvature(IteratorType itb,
     BoundingBox bb;
     DIPaCUS::Properties::CurveBoundingBox<IteratorType>(bb,itb,ite);
 
-    Domain tempDomain(bb.lb + DGtal::Z2i::Point(-2,-2),bb.ub+ DGtal::Z2i::Point(2,2));
-    DigitalSet tempDS(tempDomain);
+    //The DGtal class that computes the II estimator needs the origin in the domain
+    if(bb.lb(0) >0 ) bb.lb(0) = 0;
+    if(bb.lb(1) >0 ) bb.lb(1) = 0;
 
+    if(bb.ub(0)< 0) bb.ub(0) = 0;
+    if(bb.ub(1)< 0) bb.ub(1) = 0;
 
-    DIPaCUS::Misc::CompactSetFromClosedCurve<IteratorType>(tempDS,itb,ite,ccw);
-    DigitalSet ds = DIPaCUS::Transform::CenterDigitalSetAtOrigin(tempDS);
+    Domain domain(bb.lb + DGtal::Z2i::Point(-2,-2),bb.ub+ DGtal::Z2i::Point(2,2));
+    DigitalSet ds(domain);
+
+    DIPaCUS::Misc::CompactSetFromClosedCurve<IteratorType>(ds,itb,ite,ccw);
 
     KSpace KImage;
     KImage.init(ds.domain().lowerBound(),ds.domain().upperBound(),true);
