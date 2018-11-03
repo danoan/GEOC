@@ -45,7 +45,7 @@ namespace GEOC
                 typedef DGtal::functors::IICurvatureFunctor<DGtal::Z2i::Space> MyIICurvatureFunctor;
                 typedef DGtal::IntegralInvariantVolumeEstimator< KSpace, DigitalSet, MyIICurvatureFunctor > MyIICurvatureEstimator;
 
-                typedef typename DIPaCUS::Properties::CurveBoundingBox<IteratorType>::BoundingBox BoundingBox;
+                typedef typename DIPaCUS::Properties::BoundingBox BoundingBox;
 
                 //It is expected a counter-clockwise curve.
                 IICurvature(IteratorType itb,

@@ -25,7 +25,7 @@ IICurvature<IteratorType>::IICurvature(IteratorType itb,
                                        bool ccw)
 {
     BoundingBox bb;
-    DIPaCUS::Properties::CurveBoundingBox<IteratorType>(bb,itb,ite);
+    DIPaCUS::Properties::curveBoundingBox<IteratorType>(bb,itb,ite);
 
     //The DGtal class that computes the II estimator needs the origin in the domain
     if(bb.lb(0) >0 ) bb.lb(0) = 0;
