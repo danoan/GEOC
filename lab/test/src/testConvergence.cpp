@@ -47,13 +47,17 @@ TestConvergence::TestConvergence(double radius, double h)
     KSpace KImage;
     KImage.init(domain.lowerBound(),domain.upperBound(),true);
 
-    typedef GEOC::API::GridCurve::Curvature GridCurveCurvature;
 
     std::vector<double> estimationsMDCA;
-    GEOC::API::GridCurve::Curvature::symmetricClosed<GridCurveCurvature::ALG_MDCA>(KImage,c.begin(),c.end(),estimationsMDCA,h);
-
     std::vector<double> estimationsII;
-    GEOC::API::GridCurve::Curvature::identityOpen<GridCurveCurvature::ALG_II>(KImage,c.begin(),c.end(),estimationsII,h);
+
+    {
+        using namespace GEOC::API::GridCurve::Curvature;
+
+        symmetricClosed<EstimationAlgorithms::ALG_MDCA>(KImage,c.begin(),c.end(),estimationsMDCA,h);
+        identityOpen<EstimationAlgorithms::ALG_II>(KImage,c.begin(),c.end(),estimationsII,h);
+    }
+
 
     double mdca,ii;
     assert(estimationsII.size()==estimationsMDCA.size());

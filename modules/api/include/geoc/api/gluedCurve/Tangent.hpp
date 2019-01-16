@@ -1,5 +1,7 @@
-#include <geoc/estimator/standard/Tangent.h>
-#include <geoc/estimator/alternative/Tangent.h>
+#ifndef GEOC_API_GLUEDCURVE_TANGENT_H
+#define GEOC_API_GLUEDCURVE_TANGENT_H
+
+#include <geoc/estimator/adaptable/Tangent.h>
 #include <geoc/adapter/GluedCurve.h>
 
 namespace GEOC
@@ -16,7 +18,7 @@ namespace GEOC
                 using ALG_MDSS = GEOC::Estimator::Standard::MDSSTangent<T>;
 
                 template<typename T>
-                using ALD_LMDSS = GEOC::Estimator::Alternative::MDSSLambdaTangent<T>;
+                using ALD_LMDSS = GEOC::Estimator::Alternative::LMDSSTangent<T>;
 
             public:
                 typedef DGtal::Z2i::KSpace KSpace;
@@ -40,7 +42,7 @@ namespace GEOC
                                           EstimationsVector& ev,
                                           double h=1.0)
                 {
-                    GEOC::Adapter::GluedCurve::SymmetricTangent< TAlgorithm,false>(begin,end,KImage,ev,h);
+                    GEOC::Adapter::GluedCurve::Symmetric< TAlgorithm,false>(begin,end,KImage,ev,h);
                 }
 
                 template< template<typename> class TAlgorithm>
@@ -50,7 +52,7 @@ namespace GEOC
                                             EstimationsVector& ev,
                                             double h=1.0)
                 {
-                    GEOC::Adapter::GluedCurve::SymmetricTangent< TAlgorithm,true>(begin,end,KImage,ev,h);
+                    GEOC::Adapter::GluedCurve::Symmetric< TAlgorithm,true>(begin,end,KImage,ev,h);
                 }
 
 
@@ -58,3 +60,4 @@ namespace GEOC
         }
     }
 }
+#endif //GEOC_API_GLUEDCURVE_TANGENT_H

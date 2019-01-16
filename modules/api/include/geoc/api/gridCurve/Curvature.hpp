@@ -1,11 +1,10 @@
-#ifndef GEOC_GRIDCURVECURVATURE_H
-#define GEOC_GRIDCURVECURVATURE_H
+#ifndef GEOC_API_GRIDCURVE_CURVATURE_H
+#define GEOC_API_GRIDCURVE_CURVATURE_H
 
 #include <DGtal/helpers/StdDefs.h>
 
-#include <geoc/estimator/standard/Curvature.h>
 #include <geoc/adapter/GridCurve.h>
-#include <geoc/estimator/alternative/Curvature.h>
+#include <geoc/estimator/adaptable/Curvature.h>
 
 namespace GEOC
 {
@@ -13,73 +12,66 @@ namespace GEOC
     {
         namespace GridCurve
         {
-            class Curvature
+            namespace Curvature
             {
-            public:
+                namespace EstimationAlgorithms
+                {
+                    template<typename T>
+                    using ALG_MDCA = GEOC::Estimator::Standard::MDCACurvature<T>;
 
-                template<typename T>
-                using ALG_MDCA = GEOC::Estimator::Standard::MDCACurvature<T>;
+                    template<typename T>
+                    using ALG_II = GEOC::Estimator::Standard::IICurvature<T>;
 
-                template<typename T>
-                using ALG_II = GEOC::Estimator::Standard::IICurvature<T>;
+                    template<typename T>
+                    using ALG_LMDCA = GEOC::Estimator::Alternative::LMDCACurvature<T>;
 
-                template<typename T>
-                using ALG_LDCA = GEOC::Estimator::Alternative::DCALambdaCurvature<T>;
+                    template<typename T>
+                    using ALG_HMDCA = GEOC::Estimator::Alternative::HMDCACurvature<T>;
+                }
 
-                template<typename T>
-                using ALG_HDCA = GEOC::Estimator::Alternative::HDCACurvature<T>;
-
-            public:
                 typedef DGtal::Z2i::Curve Curve;
                 typedef Curve::ConstIterator CurveIterator;
 
                 typedef std::vector<double> EstimationsVector;
 
-            private:
-                Curvature();
-                Curvature(const Curvature&)=delete;
-                Curvature& operator=(const Curvature&)=delete;
-
-            public:
-
                 template< template<typename> class TAlgorithm>
-                static void symmetricOpen(const KSpace& KImage,
-                                          CurveIterator begin,
-                                          CurveIterator end,
-                                          EstimationsVector& ev,
-                                          double h=1.0)
+                void symmetricOpen(const KSpace& KImage,
+                                   CurveIterator begin,
+                                   CurveIterator end,
+                                   EstimationsVector& ev,
+                                   double h=1.0)
                 {
-                    GEOC::Adapter::GridCurve::SymmetricCurvature< TAlgorithm,false>(begin,end,KImage,ev,h);
+                    GEOC::Adapter::GridCurve::Symmetric< TAlgorithm,false>(begin,end,KImage,ev,h);
                 }
 
                 template< template<typename> class TAlgorithm>
-                static void symmetricClosed(const KSpace& KImage,
-                                            CurveIterator begin,
-                                            CurveIterator end,
-                                            EstimationsVector& ev,
-                                            double h=1.0)
+                void symmetricClosed(const KSpace& KImage,
+                                     CurveIterator begin,
+                                     CurveIterator end,
+                                     EstimationsVector& ev,
+                                     double h=1.0)
                 {
-                    GEOC::Adapter::GridCurve::SymmetricCurvature< TAlgorithm,true>(begin,end,KImage,ev,h);
+                    GEOC::Adapter::GridCurve::Symmetric< TAlgorithm,true>(begin,end,KImage,ev,h);
                 }
 
                 template< template<typename> class TAlgorithm>
-                static void identityOpen(const KSpace& KImage,
-                                           CurveIterator begin,
-                                           CurveIterator end,
-                                           EstimationsVector& ev,
-                                           double h=1.0)
+                void identityOpen(const KSpace& KImage,
+                                  CurveIterator begin,
+                                  CurveIterator end,
+                                  EstimationsVector& ev,
+                                  double h=1.0)
                 {
-                    GEOC::Adapter::GridCurve::IdentityRangeCurvature< TAlgorithm,false>(begin,end,KImage,ev,h);
+                    GEOC::Adapter::GridCurve::Identity< TAlgorithm,false>(begin,end,KImage,ev,h);
                 }
 
                 template< template<typename> class TAlgorithm>
-                static void identityClosed(const KSpace& KImage,
-                                            CurveIterator begin,
-                                            CurveIterator end,
-                                            EstimationsVector& ev,
-                                            double h=1.0)
+                void identityClosed(const KSpace& KImage,
+                                    CurveIterator begin,
+                                    CurveIterator end,
+                                    EstimationsVector& ev,
+                                    double h=1.0)
                 {
-                    GEOC::Adapter::GridCurve::IdentityRangeCurvature< TAlgorithm,true>(begin,end,KImage,ev,h);
+                    GEOC::Adapter::GridCurve::Identity< TAlgorithm,true>(begin,end,KImage,ev,h);
                 }
 
             };
@@ -87,4 +79,4 @@ namespace GEOC
     }
 }
 
-#endif //GEOC_GRIDCURVECURVATURE_H
+#endif //GEOC_API_GRIDCURVE_CURVATURE_H

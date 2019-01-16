@@ -1,31 +1,30 @@
-#include "geoc/estimator/base/DCALambdaEstimator.h"
+#include "HMDCAEstimator.h"
 
 using namespace GEOC::Estimator::Base;
-
 
 // ----------------------- Standard services ------------------------------
 
 // ------------------------------------------------------------------------
-template<typename SegmentComputer, typename SCEstimator, typename LambdaFunction>
+template<typename SegmentComputer, typename SCEstimator>
 inline
-DCALambdaEstimator<SegmentComputer, SCEstimator,LambdaFunction>
-::DCALambdaEstimator() {}
+HMDCAEstimator<SegmentComputer, SCEstimator>
+::HMDCAEstimator() {}
 
 
 // ------------------------------------------------------------------------
-template<typename SegmentComputer, typename SCEstimator, typename LambdaFunction>
+template<typename SegmentComputer, typename SCEstimator>
 inline
-DCALambdaEstimator<SegmentComputer, SCEstimator, LambdaFunction>
-::DCALambdaEstimator(const SegmentComputer &aSegmentComputer,
-                                const SCEstimator &aSCEstimator)
+HMDCAEstimator<SegmentComputer, SCEstimator>
+::HMDCAEstimator(const SegmentComputer &aSegmentComputer,
+                                   const SCEstimator &aSCEstimator)
         : myH(0), mySC(aSegmentComputer), mySCEstimator(aSCEstimator) {}
 
 
 // ------------------------------------------------------------------------
-template<typename SegmentComputer, typename SCEstimator, typename LambdaFunction>
+template<typename SegmentComputer, typename SCEstimator>
 inline
 void
-DCALambdaEstimator<SegmentComputer, SCEstimator, LambdaFunction>
+HMDCAEstimator<SegmentComputer, SCEstimator>
 ::init(const double h, const ConstIterator &itb, const ConstIterator &ite) {
 
     myH = h;
@@ -37,20 +36,20 @@ DCALambdaEstimator<SegmentComputer, SCEstimator, LambdaFunction>
 
 
 // ------------------------------------------------------------------------
-template<typename SegmentComputer, typename SCEstimator, typename LambdaFunction>
+template<typename SegmentComputer, typename SCEstimator>
 inline
 bool
-DCALambdaEstimator<SegmentComputer, SCEstimator, LambdaFunction>::isValid() const {
+HMDCAEstimator<SegmentComputer, SCEstimator>::isValid() const {
     return ((myH > 0) && (DGtal::isNotEmpty(myBegin, myEnd)));
 }
 
 
 // ------------------------------------------------------------------------
-template<typename SegmentComputer, typename SCEstimator, typename LambdaFunction>
+template<typename SegmentComputer, typename SCEstimator>
 template<typename OutputIterator>
 inline
 OutputIterator
-DCALambdaEstimator<SegmentComputer, SCEstimator, LambdaFunction>
+HMDCAEstimator<SegmentComputer, SCEstimator>
 ::eval(const ConstIterator &itb, const ConstIterator &ite,
        OutputIterator result)
 {
@@ -64,13 +63,12 @@ DCALambdaEstimator<SegmentComputer, SCEstimator, LambdaFunction>
     }
 
     int intervalLength = DGtal::rangeSize(itb,ite);
-    std::vector<std::pair<double, double> > outValues(intervalLength);
+    std::vector<double> outValues(intervalLength);
 
 
     for(auto it=outValues.begin();it!=outValues.end();++it)
     {
-        it->first = 0;
-        it->second = 0;
+        *it= 0;
     }
 
     if (this->isValid())
@@ -90,9 +88,8 @@ DCALambdaEstimator<SegmentComputer, SCEstimator, LambdaFunction>
             do
             {
                 int baseIndex = DGtal::rangeSize(itb, segMemberIt)%intervalLength;
-                double lbda = lambdaFunction((double) pos / segLength);
-                outValues[baseIndex].first += lbda;
-                outValues[baseIndex].second += lbda * mySCEstimator.eval(segMemberIt);
+                double v = mySCEstimator.eval(segMemberIt);
+                outValues[baseIndex] = fabs(v)>fabs(outValues[baseIndex])?fabs(v):outValues[baseIndex];
 
                 ++pos;
                 ++segMemberIt;
@@ -105,14 +102,7 @@ DCALambdaEstimator<SegmentComputer, SCEstimator, LambdaFunction>
 
     for (int i=0;i<outValues.size();++i)
     {
-        if(outValues[i].first==0)
-        {
-            result = 0;
-        }else
-        {
-            double x = outValues[i].second / outValues[i].first;
-            result = x;
-        }
+        result = outValues[i];
     }
 
     return result;
@@ -121,24 +111,22 @@ DCALambdaEstimator<SegmentComputer, SCEstimator, LambdaFunction>
 
 
 // ------------------------------------------------------------------------
-template<typename SegmentComputer, typename SCEstimator, typename LambdaFunction>
+template<typename SegmentComputer, typename SCEstimator>
 inline
-typename DCALambdaEstimator<SegmentComputer, SCEstimator, LambdaFunction>::Quantity
-DCALambdaEstimator<SegmentComputer, SCEstimator, LambdaFunction>
+typename HMDCAEstimator<SegmentComputer, SCEstimator>::Quantity
+HMDCAEstimator<SegmentComputer, SCEstimator>
 ::eval(const ConstIterator &it) {
 
     throw DGtal::InputException("Not implemented");
 
     if (this->isValid()) {
         if (DGtal::isNotEmpty(it, myEnd)) {
-            int pos;
-            int segmentLength;
-            lambdaFunction((double) pos / segmentLength);
+
 
             return 0;
         } else {
             std::cerr
-                    << "[DGtal::LambdaMaximalSegmentEstimator<SegmentComputer,SCEstimator>::eval(const ConstIterator& it)]"
+                    << "[DGtal::PessimistMaximalSegmentEstimator<SegmentComputer,SCEstimator>::eval(const ConstIterator& it)]"
                     << " ERROR. Iterator is invalid (==myEnd)." << std::endl;
             throw DGtal::InputException();
             return Quantity();
@@ -146,7 +134,7 @@ DCALambdaEstimator<SegmentComputer, SCEstimator, LambdaFunction>
 
     } else {
         std::cerr
-                << "[DGtal::LambdaMaximalSegmentEstimator<SegmentComputer,SCEstimator>::eval(const ConstIterator& it)]"
+                << "[DGtal::PessimistMaximalSegmentEstimator<SegmentComputer,SCEstimator>::eval(const ConstIterator& it)]"
                 << " ERROR. Object is not initialized." << std::endl;
         throw DGtal::InputException();
         return Quantity();

@@ -1,10 +1,9 @@
-#ifndef GEOC_GLUEDCURVECURVATURE_H
-#define GEOC_GLUEDCURVECURVATURE_H
+#ifndef GEOC_API_GLUEDCURVE_CURVATURE_H
+#define GEOC_API_GLUEDCURVE_CURVATURE_H
 
 #include <DGtal/helpers/StdDefs.h>
 
-#include <geoc/estimator/standard/Curvature.h>
-#include <geoc/estimator/alternative/Curvature.h>
+#include <geoc/estimator/adaptable/Curvature.h>
 #include <geoc/adapter/GluedCurve.h>
 
 namespace GEOC
@@ -24,10 +23,10 @@ namespace GEOC
                 using ALG_II = GEOC::Estimator::Standard::IICurvature<T>;
 
                 template<typename T>
-                using ALG_LDCA = GEOC::Estimator::Alternative::DCALambdaCurvature<T>;
+                using ALG_LMDCA = GEOC::Estimator::Alternative::LMDCACurvature<T>;
 
                 template<typename T>
-                using ALG_HDCA = GEOC::Estimator::Alternative::HDCACurvature<T>;
+                using ALG_HMDCA = GEOC::Estimator::Alternative::HMDCACurvature<T>;
 
             public:
                 typedef DGtal::Z2i::KSpace KSpace;
@@ -48,7 +47,7 @@ namespace GEOC
                                           EstimationsVector& ev,
                                           double h=1.0)
                 {
-                    GEOC::Adapter::GluedCurve::SymmetricCurvature< TAlgorithm,false>(begin,end,KImage,ev,h);
+                    GEOC::Adapter::GluedCurve::Symmetric< TAlgorithm,false>(begin,end,KImage,ev,h);
                 }
 
                 template< template<typename> class TAlgorithm>
@@ -58,7 +57,7 @@ namespace GEOC
                                             EstimationsVector& ev,
                                             double h=1.0)
                 {
-                    GEOC::Adapter::GluedCurve::SymmetricCurvature< TAlgorithm,true>(begin,end,KImage,ev,h);
+                    GEOC::Adapter::GluedCurve::Symmetric< TAlgorithm,true>(begin,end,KImage,ev,h);
                 }
 
             };
@@ -66,4 +65,4 @@ namespace GEOC
     }
 }
 
-#endif //GEOC_GRIDCURVECURVATURE_H
+#endif //GEOC_API_GLUEDCURVE_CURVATURE_H
