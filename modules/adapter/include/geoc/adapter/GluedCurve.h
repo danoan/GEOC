@@ -2,7 +2,7 @@
 #define GEOC_ADAPTER_GLUEDCURVE_H
 
 #include <geoc/adapter/base/GeneralAdapter.h>
-#include "gcurve/GluedLinelsIterator.h"
+#include "gcurve/GluedCurve.h"
 
 namespace GEOC
 {
@@ -10,7 +10,7 @@ namespace GEOC
     {
         namespace GluedCurve
         {
-            typedef GCurve::GluedLinelsIterator IteratorType;
+            typedef GCurve::GluedCurve::MyGluedLinelsIterator IteratorType;
 
             template<template<typename> class TEstimator, bool closedCurve>
             class SymmetricCurvature:public GeneralAdapter::SymmetricCurvature<IteratorType,TEstimator,closedCurve>

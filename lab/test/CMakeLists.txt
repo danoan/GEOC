@@ -9,6 +9,7 @@ target_include_directories(testGeoc PRIVATE
         include
         ${CMAKE_SOURCE_DIR}/modules/adapter/include
         ${CMAKE_SOURCE_DIR}/modules/estimator/include
+        ${CMAKE_SOURCE_DIR}/modules/api/include
         ${DIPACUS_INCLUDE_DIRS}
         ${GCURVE_INCLUDE_DIRS}
         ${DGTAL_INCLUDE_DIRS})

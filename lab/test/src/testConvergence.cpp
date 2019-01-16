@@ -47,30 +47,35 @@ TestConvergence::TestConvergence(double radius, double h)
     KSpace KImage;
     KImage.init(domain.lowerBound(),domain.upperBound(),true);
 
-    typedef GEOC::Adapter::GridCurve::SymmetricCurvature< GEOC::Estimator::Standard::MDCACurvature,true > ClosedSymmetricCurvature;
-    typedef GEOC::Adapter::GridCurve::IdentityRangeCurvature< GEOC::Estimator::Standard::IICurvature,false > OpenIICurvature;
-
+    typedef GEOC::API::GridCurve::Curvature GridCurveCurvature;
 
     std::vector<double> estimationsMDCA;
-    ClosedSymmetricCurvature CSC(c.begin(),c.end(),KImage,estimationsMDCA,h);
+    GEOC::API::GridCurve::Curvature::symmetricClosed<GridCurveCurvature::ALG_MDCA>(KImage,c.begin(),c.end(),estimationsMDCA,h);
 
     std::vector<double> estimationsII;
-    OpenIICurvature CIIC(c.begin(),c.end(),KImage,estimationsII,h);
-
+    GEOC::API::GridCurve::Curvature::identityOpen<GridCurveCurvature::ALG_II>(KImage,c.begin(),c.end(),estimationsII,h);
 
     double mdca,ii;
     assert(estimationsII.size()==estimationsMDCA.size());
 
     double maxDiff=0;
+    double maxMDCA=0;
+    double maxII=0;
     if(verbose)
     {
         for(int i=0;i<estimationsII.size();++i)
         {
             mdca = estimationsMDCA[i];
             ii = estimationsII[i];
+
             maxDiff = fabs(mdca-ii)>maxDiff?fabs(mdca-ii):maxDiff;
+            maxMDCA = fabs(mdca)>maxMDCA?fabs(mdca):maxMDCA;
+            maxII = fabs(ii)>maxII?fabs(ii):maxII;
         }
 
+        std::cout << "Ground Truth: " << 1.0/radius << std::endl;
+        std::cout << "Max II: " << maxII << std::endl;
+        std::cout << "Max MDCA: " << maxMDCA << std::endl;
         std::cout << "Max Diff: " << maxDiff << std::endl;
     }
 }
