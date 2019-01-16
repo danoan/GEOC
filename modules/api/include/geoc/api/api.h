@@ -7,4 +7,8 @@
 #include "gluedCurve/Tangent.hpp"
 #include "gridCurve/Tangent.hpp"
 
+#include "gluedCurve/Length.hpp"
+#include "gridCurve/Length.hpp"
+
+
 #endif //GEOC_API_H
