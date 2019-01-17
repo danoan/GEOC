@@ -9,7 +9,7 @@ namespace GEOC
 {
     namespace API
     {
-        namespace GridCurve
+        namespace GluedCurve
         {
             namespace Length
             {
@@ -27,53 +27,53 @@ namespace GEOC
                 typedef std::vector<double> EstimationsVector;
 
 
-                template<typename TAlgorithm>
+                template< template<typename> class TAlgorithm>
                 void mdssOpen(const KSpace& KImage,
                               CurveIterator begin,
                               CurveIterator end,
                               EstimationsVector& ev,
                               double h=1.0)
                 {
-                    typedef GEOC::Adapter::GeneralAdapter::Symmetric<CurveIterator,
+                    typedef GEOC::Adapter::GeneralAdapter::Identity<CurveIterator,
                             GEOC::Estimator::Standard::MDSSTangent,
                             false> TangentAdapter;
                     TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h);
                 }
 
-                template<typename TAlgorithm>
+                template< template<typename> class TAlgorithm>
                 void mdssClosed(const KSpace& KImage,
                                 CurveIterator begin,
                                 CurveIterator end,
                                 EstimationsVector& ev,
                                 double h=1.0)
                 {
-                    typedef GEOC::Adapter::GeneralAdapter::Symmetric<CurveIterator,
+                    typedef GEOC::Adapter::GeneralAdapter::Identity<CurveIterator,
                             GEOC::Estimator::Standard::MDSSTangent,
                             true> TangentAdapter;
                     TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h);
                 }
 
-                template<typename TAlgorithm>
+                template< template<typename> class TAlgorithm>
                 void lmdssOpen(const KSpace& KImage,
                                CurveIterator begin,
                                CurveIterator end,
                                EstimationsVector& ev,
                                double h=1.0)
                 {
-                    typedef GEOC::Adapter::GeneralAdapter::Symmetric<CurveIterator,
+                    typedef GEOC::Adapter::GeneralAdapter::Identity<CurveIterator,
                             GEOC::Estimator::Alternative::LMDSSTangent,
                             false> TangentAdapter;
                     TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h);
                 }
 
-                template<typename TAlgorithm>
+                template< template<typename> class TAlgorithm>
                 void lmdssClosed(const KSpace& KImage,
                                  CurveIterator begin,
                                  CurveIterator end,
                                  EstimationsVector& ev,
                                  double h=1.0)
                 {
-                    typedef GEOC::Adapter::GeneralAdapter::Symmetric<CurveIterator,
+                    typedef GEOC::Adapter::GeneralAdapter::Identity<CurveIterator,
                             GEOC::Estimator::Alternative::LMDSSTangent,
                             true> TangentAdapter;
                     TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h);

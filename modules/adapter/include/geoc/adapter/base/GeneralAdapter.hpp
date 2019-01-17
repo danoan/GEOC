@@ -27,37 +27,37 @@ Symmetric< TIterator, TEstimator, closedCurve>::Symmetric(TIterator begin,
                                                           std::vector<EstimationValue>& estimations,
                                                           double h)
 {
-    Curve negativeCurve;
+    Curve inverseCurve;
     DIPaCUS::Misc::InvertCurve<Curve::ConstIterator>(KImage,
                                                      begin,
                                                      end,
-                                                     negativeCurve);
+                                                     inverseCurve);
 
     AdapterFunctor myFunctor(KImage);
-    MyRangeAdapter rangePositiveCurve(begin,
-                                             end,
-                                             myFunctor);
+    MyRangeAdapter rangeDirectCurve(begin,
+                                    end,
+                                    myFunctor);
 
-    MyRangeAdapter rangeNegativeCurve(negativeCurve.begin(),
-                                             negativeCurve.end(),
-                                             myFunctor);
+    MyRangeAdapter rangeInverseCurve(inverseCurve.begin(),
+                                     inverseCurve.end(),
+                                     myFunctor);
 
 
-    std::vector<EstimationValue> positiveEstimations;
-    std::vector<EstimationValue> negativeEstimations;
+    std::vector<EstimationValue> directEstimations;
+    std::vector<EstimationValue> inverseEstimations;
 
-    MyEstimator(rangePositiveCurve,
-                positiveEstimations,
+    MyEstimator(rangeDirectCurve,
+                directEstimations,
                 h);
 
-    MyEstimator(rangeNegativeCurve,
-                negativeEstimations,
+    MyEstimator(rangeInverseCurve,
+                inverseEstimations,
                 h);
 
     int ip=0;
-    int nL = negativeEstimations.size()-1;
+    int nL = inverseEstimations.size()-1;
     do{
-        estimations.push_back( ( fabs(positiveEstimations[ip]) + fabs(negativeEstimations[nL-ip]) )/2.0 );
+        estimations.push_back( ( directEstimations[ip] + inverseEstimations[nL-ip] )/2.0 );
         ++ip;
     }while(ip<=nL);
 };
