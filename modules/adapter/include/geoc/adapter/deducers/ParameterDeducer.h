@@ -38,7 +38,10 @@ namespace GEOC
             typedef double EstimationValue;
             struct AdapterFunctor
             {
+                typedef DGtal::Z2i::KSpace KSpace;
                 typedef DGtal::Z2i::Curve::SCell Output;
+
+                AdapterFunctor(const KSpace& KImage){}
 
                 inline
                 Output operator()(const Output& aT) const

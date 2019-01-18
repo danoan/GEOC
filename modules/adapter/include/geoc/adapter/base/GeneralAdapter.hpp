@@ -9,7 +9,7 @@ Identity< TIterator, TEstimator, closedCurve>::Identity(MyIterator begin,
                                                         std::vector<EstimationValue>& estimations,
                                                         double h)
 {
-    AdapterFunctor myFunctor;
+    AdapterFunctor myFunctor(KImage);
     MyRangeAdapter range(begin,
                          end,
                          myFunctor);
@@ -57,7 +57,7 @@ Symmetric< TIterator, TEstimator, closedCurve>::Symmetric(TIterator begin,
     int ip=0;
     int nL = inverseEstimations.size()-1;
     do{
-        estimations.push_back( ( directEstimations[ip] + inverseEstimations[nL-ip] )/2.0 );
+        estimations.push_back( ( directEstimations[ip] - inverseEstimations[nL-ip] )/2.0 );
         ++ip;
     }while(ip<=nL);
 };
