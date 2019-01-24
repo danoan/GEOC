@@ -4,7 +4,6 @@
 #include <geoc/estimator/non-adaptable/length/Projected.hpp>
 #include <geoc/estimator/non-adaptable/length/SinCos.hpp>
 #include <geoc/adapter/base/GeneralAdapter.h>
-#include <geoc/adapter/GluedCurve.h>
 #include <geoc/adapter/GridCurve.h>
 
 namespace GEOC
