@@ -28,10 +28,10 @@ Symmetric< TIterator, TEstimator, closedCurve>::Symmetric(TIterator begin,
                                                           double h)
 {
     Curve inverseCurve;
-    DIPaCUS::Misc::InvertCurve<Curve::ConstIterator>(KImage,
-                                                     begin,
-                                                     end,
-                                                     inverseCurve);
+    DIPaCUS::Misc::invertCurve(inverseCurve,
+                               KImage,
+                               begin,
+                               end);
 
     AdapterFunctor myFunctor(KImage);
     MyRangeAdapter rangeDirectCurve(begin,

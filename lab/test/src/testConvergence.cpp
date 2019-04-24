@@ -31,7 +31,7 @@ TestConvergence::CurveAndDS TestConvergence::prepareDigitalObjects(double radius
     c.initFromVector(vectorOfPoint);
 
     DGtal::Z2i::DigitalSet ds(domain);
-    DIPaCUS::Misc::CompactSetFromClosedCurve<Curve::ConstIterator>(ds,c.begin(),c.end());
+    DIPaCUS::Misc::compactSetFromClosedCurve(ds,c.begin(),c.end());
 
     return CurveAndDS(c,ds);
 }
