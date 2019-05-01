@@ -2,11 +2,10 @@
 #define GEOC_ADAPTER_BASE_GENERALADAPTER_H
 
 #include <DGtal/helpers/StdDefs.h>
-#include "geoc/adapter/patch/SCellToPoint.h"
-
 #include "DIPaCUS/derivates/Misc.h"
 
-#include "EstimatorDeducer.h"
+#include "geoc/adapter/deducers/EstimatorDeducer.h"
+#include "geoc/adapter/deducers/ParameterDeducer.h"
 
 namespace GEOC
 {
@@ -19,119 +18,52 @@ namespace GEOC
             typedef DGtal::Z2i::KSpace KSpace;
 
             template< typename TIterator, template<typename> class TEstimator, bool closedCurve >
-            class IdentityRangeCurvature
+            class Identity
             {
             public:
                 typedef TIterator MyIterator;
-                typedef double EstimationValue;
 
-                struct AdapterFunctor
-                {
-                    typedef Curve::SCell Output;
-
-                    inline
-                    Output operator()(const Output& aT) const
-                    {
-                        return aT;
-                    }
-                };
+                typedef ParameterDeducer<TEstimator> MyParameterDeducer;
+                typedef typename MyParameterDeducer::AdapterFunctor AdapterFunctor;
+                typedef typename MyParameterDeducer::EstimationValue EstimationValue;
 
                 typedef EstimatorDeducer<TIterator,TEstimator,AdapterFunctor,EstimationValue,closedCurve> MyEstimator;
                 typedef typename MyEstimator::RangeAdapter MyRangeAdapter;
             public:
-                IdentityRangeCurvature(){}
+                Identity(){}
 
-                IdentityRangeCurvature(MyIterator begin,
-                                       MyIterator end,
-                                       const KSpace& KImage,
-                                       std::vector<EstimationValue>& estimations,
-                                       double h);
+                Identity(MyIterator begin,
+                         MyIterator end,
+                         const KSpace& KImage,
+                         std::vector<EstimationValue>& estimations,
+                         double h);
 
             };
 
 
             template< typename TIterator, template<typename> class TEstimator, bool closedCurve >
-            class SymmetricCurvature
+            class Symmetric
             {
             public:
                 typedef TIterator MyIterator;
-                typedef double EstimationValue;
 
-                typedef DGtal::functors::SCellToIncidentPoints<KSpace> AdapterFunctor;
+                typedef ParameterDeducer<TEstimator> MyParameterDeducer;
+                typedef typename MyParameterDeducer::AdapterFunctor AdapterFunctor;
+                typedef typename MyParameterDeducer::EstimationValue EstimationValue;
 
                 typedef EstimatorDeducer<TIterator,TEstimator,AdapterFunctor,EstimationValue,closedCurve> MyEstimator;
                 typedef typename MyEstimator::RangeAdapter MyRangeAdapter;
             public:
-                SymmetricCurvature(){}
+                Symmetric(){}
 
-                SymmetricCurvature(MyIterator begin,
-                                   MyIterator end,
-                                   const KSpace& KImage,
-                                   std::vector<EstimationValue>& estimations,
-                                   double h);
+                Symmetric(MyIterator begin,
+                          MyIterator end,
+                          const KSpace& KImage,
+                          std::vector<EstimationValue>& estimations,
+                          double h);
 
             };
 
-            template<typename TIterator, template<typename> class TEstimator, bool closedCurve>
-            class SymmetricTangent
-            {
-            public:
-                typedef TIterator MyIterator;
-                typedef DGtal::PointVector<2,double> EstimationValue;
-
-                typedef DGtal::Patch::functors::SCellToPoint<KSpace> AdapterFunctor;
-
-                typedef EstimatorDeducer<TIterator,TEstimator,AdapterFunctor,EstimationValue,closedCurve> MyEstimator;
-                typedef typename MyEstimator::RangeAdapter MyRangeAdapter;
-
-            public:
-                SymmetricTangent(){}
-
-                SymmetricTangent(MyIterator begin,
-                                 MyIterator end,
-                                 const KSpace& KImage,
-                                 std::vector< EstimationValue >& estimationsTangent,
-                                 double h);
-            };
-
-            template<typename TTangentAdapter>
-            class ProjectedLength
-            {
-            public:
-                typedef typename TTangentAdapter::MyIterator MyIterator;
-                typedef typename TTangentAdapter::EstimationValue MyTangentValue;
-
-                typedef double EstimationValue;
-
-                typedef TTangentAdapter MyTangentAdapter;
-
-            public:
-                ProjectedLength(MyIterator begin,
-                                MyIterator end,
-                                const KSpace& KImage,
-                                std::vector< EstimationValue >& estimations,
-                                double h);
-            };
-
-
-            template<typename TTangentAdapter>
-            class SinCosLength
-            {
-            public:
-                typedef typename TTangentAdapter::MyIterator MyIterator;
-                typedef typename TTangentAdapter::EstimationValue MyTangentValue;
-
-                typedef double EstimationValue;
-
-                typedef TTangentAdapter MyTangentAdapter;
-
-            public:
-                SinCosLength(MyIterator begin,
-                             MyIterator end,
-                             const KSpace &KImage,
-                             std::vector<EstimationValue> &estimations,
-                             double h);
-            };
         }
     }
 }

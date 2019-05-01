@@ -3,13 +3,13 @@
 using namespace GEOC::Adapter::GeneralAdapter;
 
 template< typename TIterator, template<typename> class TEstimator, bool closedCurve >
-IdentityRangeCurvature< TIterator, TEstimator, closedCurve>::IdentityRangeCurvature(MyIterator begin,
-                                                                                    MyIterator end,
-                                                                                    const KSpace& KImage,
-                                                                                    std::vector<EstimationValue>& estimations,
-                                                                                    double h)
+Identity< TIterator, TEstimator, closedCurve>::Identity(MyIterator begin,
+                                                        MyIterator end,
+                                                        const KSpace& KImage,
+                                                        std::vector<EstimationValue>& estimations,
+                                                        double h)
 {
-    AdapterFunctor myFunctor;
+    AdapterFunctor myFunctor(KImage);
     MyRangeAdapter range(begin,
                          end,
                          myFunctor);
@@ -21,137 +21,43 @@ IdentityRangeCurvature< TIterator, TEstimator, closedCurve>::IdentityRangeCurvat
 };
 
 template< typename TIterator, template<typename> class TEstimator, bool closedCurve >
-SymmetricCurvature< TIterator, TEstimator, closedCurve>::SymmetricCurvature(TIterator begin,
-                                                                            TIterator end,
-                                                                            const KSpace& KImage,
-                                                                            std::vector<EstimationValue>& estimations,
-                                                                            double h)
+Symmetric< TIterator, TEstimator, closedCurve>::Symmetric(TIterator begin,
+                                                          TIterator end,
+                                                          const KSpace& KImage,
+                                                          std::vector<EstimationValue>& estimations,
+                                                          double h)
 {
-    Curve negativeCurve;
-    DIPaCUS::Misc::InvertCurve<Curve::ConstIterator>(KImage,
-                                                     begin,
-                                                     end,
-                                                     negativeCurve);
+    Curve inverseCurve;
+    DIPaCUS::Misc::invertCurve(inverseCurve,
+                               KImage,
+                               begin,
+                               end);
 
     AdapterFunctor myFunctor(KImage);
-    MyRangeAdapter rangePositiveCurve(begin,
-                                             end,
-                                             myFunctor);
+    MyRangeAdapter rangeDirectCurve(begin,
+                                    end,
+                                    myFunctor);
 
-    MyRangeAdapter rangeNegativeCurve(negativeCurve.begin(),
-                                             negativeCurve.end(),
-                                             myFunctor);
+    MyRangeAdapter rangeInverseCurve(inverseCurve.begin(),
+                                     inverseCurve.end(),
+                                     myFunctor);
 
 
-    std::vector<EstimationValue> positiveEstimations;
-    std::vector<EstimationValue> negativeEstimations;
+    std::vector<EstimationValue> directEstimations;
+    std::vector<EstimationValue> inverseEstimations;
 
-    MyEstimator(rangePositiveCurve,
-                positiveEstimations,
+    MyEstimator(rangeDirectCurve,
+                directEstimations,
                 h);
 
-    MyEstimator(rangeNegativeCurve,
-                negativeEstimations,
+    MyEstimator(rangeInverseCurve,
+                inverseEstimations,
                 h);
 
     int ip=0;
-    int nL = negativeEstimations.size()-1;
+    int nL = inverseEstimations.size()-1;
     do{
-        estimations.push_back( ( fabs(positiveEstimations[ip]) + fabs(negativeEstimations[nL-ip]) )/2.0 );
+        estimations.push_back( ( directEstimations[ip] - inverseEstimations[nL-ip] )/2.0 );
         ++ip;
     }while(ip<=nL);
-};
-
-template<typename TIterator, template<typename> class TEstimator, bool closedCurve>
-SymmetricTangent<TIterator, TEstimator, closedCurve>::SymmetricTangent(TIterator begin,
-                                                                       TIterator end,
-                                                                       const KSpace& KImage,
-                                                                       std::vector< EstimationValue >& estimationsTangent,
-                                                                       double h)
-{
-    AdapterFunctor myFunctor(KImage);
-    MyRangeAdapter rangePositiveCurve(begin,
-                                      end,
-                                      myFunctor);
-
-    Curve negativeCurve;
-    DIPaCUS::Misc::InvertCurve<Curve::ConstIterator>(KImage,
-                                                     begin,
-                                                     end,
-                                                     negativeCurve);
-
-    MyRangeAdapter rangeNegativeCurve(negativeCurve.begin(),
-                                      negativeCurve.end(),
-                                      myFunctor);
-
-    std::vector<EstimationValue> positiveEstimations;
-    std::vector<EstimationValue> negativeEstimations;
-
-
-    MyEstimator(rangePositiveCurve,
-                positiveEstimations,
-                h);
-
-    MyEstimator(rangeNegativeCurve,
-                negativeEstimations,
-                h);
-
-    int ip=0;
-    int nL = negativeEstimations.size()-1;
-    do{
-        estimationsTangent.push_back( (positiveEstimations[ip]-negativeEstimations[nL-ip]).getNormalized() );
-        ++ip;
-    }while(ip<=nL);
-}
-
-template<typename TTangentAdapter>
-ProjectedLength<TTangentAdapter>::ProjectedLength(MyIterator begin,
-                                                  MyIterator end,
-                                                  const KSpace &KImage,
-                                                  std::vector<EstimationValue> &estimations,
-                                                  double h)
-{
-    std::vector< MyTangentValue > tangentEstimations;
-    MyTangentAdapter(begin,end,KImage,tangentEstimations,h);
-
-    Point pTarget,pSource,scellVector;
-    auto it = begin;
-    int i = 0;
-    do
-    {
-        pTarget = KImage.sCoords( KImage.sDirectIncident(*it,*KImage.sDirs(*it)) );
-        pSource = KImage.sCoords( KImage.sIndirectIncident(*it,*KImage.sDirs(*it)) );
-
-        scellVector = pTarget-pSource;
-
-        //Scale by h because the tangent is normalized
-        estimations.push_back( h*fabs( ( tangentEstimations[i].dot(scellVector) ) ) );
-
-        ++i;
-        ++it;
-    }while(it!=end);
-
-};
-
-
-template<typename TTangentAdapter>
-SinCosLength<TTangentAdapter>::SinCosLength(MyIterator begin,
-                                            MyIterator end,
-                                            const KSpace &KImage,
-                                            std::vector<EstimationValue> &estimations,
-                                            double h)
-{
-    std::vector< MyTangentValue > tangentEstimations;
-    MyTangentAdapter(begin,end,KImage,tangentEstimations,h);
-
-    auto it = begin;
-    int i = 0;
-    do
-    {
-        //1.0/(cos+sin) Length estimation
-        estimations.push_back( 1.0/( fabs( tangentEstimations[i][0] ) + fabs( tangentEstimations[i][1] ) ) );
-        ++i;
-        ++it;
-    }while(it!=end);
-
 };

@@ -8,8 +8,7 @@
 #include <DGtal/topology/helpers/Surfaces.h>
 
 #include <DIPaCUS/derivates/Misc.h>
-#include <geoc/estimator/standard/Curvature.h>
-#include <geoc/adapter/GridCurve.h>
+#include "geoc/api/api.h"
 
 namespace GEOC
 {

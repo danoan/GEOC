@@ -1,5 +1,5 @@
-#ifndef GEOC_DCALAMBDA_H
-#define GEOC_DCALAMBDA_H
+#ifndef GEOC_ESTIMATOR_BASE_HMDCAESTIMATOR_H
+#define GEOC_ESTIMATOR_BASE_HMDCAESTIMATOR_H
 
 #include <vector>
 
@@ -15,8 +15,6 @@
 #include "DGtal/geometry/curves/estimation/CSegmentComputerEstimator.h"
 #include "DGtal/geometry/curves/CForwardSegmentComputer.h"
 #include "DGtal/geometry/curves/SaturatedSegmentation.h"
-#include "DGtal/geometry/curves/estimation/FunctorsLambdaMST.h"
-
 
 namespace GEOC
 {
@@ -24,12 +22,11 @@ namespace GEOC
     {
         namespace Base
         {
-            template<typename SegmentComputer, typename SCEstimator, typename LambdaFunction=DGtal::functors::Lambda64Function>
-            class DCALambdaEstimator {
+            template<typename SegmentComputer, typename SCEstimator>
+            class HMDCAEstimator {
 
                 BOOST_CONCEPT_ASSERT((DGtal::concepts::CForwardSegmentComputer<SegmentComputer>));
                 BOOST_CONCEPT_ASSERT((DGtal::concepts::CSegmentComputerEstimator<SCEstimator>));
-                BOOST_CONCEPT_ASSERT((DGtal::concepts::CUnaryFunctor<LambdaFunction, double, double>));
 
                 BOOST_STATIC_ASSERT((boost::is_same<SegmentComputer,
                         typename SCEstimator::SegmentComputer>::value));
@@ -43,42 +40,26 @@ namespace GEOC
                 typedef DGtal::SaturatedSegmentation<SegmentComputer> Segmentation;
                 typedef typename Segmentation::SegmentComputerIterator SegmentIterator;
 
-
-            public:
-
-                /**
-                 *  Polynomial lambda functor \cite LachaudIVC2007.
-                 * \f$ 16 ( x^4 - 2 x^3 + x^2 ) \f$
-                 *
-                 */
-                struct Lambda16Function : std::unary_function<double, double> {
-                    double operator()(double x) const {
-                        double e2 = x * x;
-                        double e3 = e2 * x;
-                        return 16.0 * (e3 * x - 2.0 * e3 + e2);
-                    }
-                };
-
                 // ----------------------- Standard services ------------------------------
             public:
 
                 /**
                  * Default constructor. Not valid.
                  */
-                DCALambdaEstimator();
+                HMDCAEstimator();
 
                 /**
                  * Constructor.
                  * @param aSegmentComputer a segment computer
                  * @param aSCEstimator an estimator
                  */
-                DCALambdaEstimator(const SegmentComputer &aSegmentComputer,
-                          const SCEstimator &aSCEstimator);
+                HMDCAEstimator(const SegmentComputer &aSegmentComputer,
+                              const SCEstimator &aSCEstimator);
 
                 /**
                  * Destructor.
                  */
-                ~DCALambdaEstimator() {};
+                ~HMDCAEstimator() {};
 
                 // ----------------------- Interface --------------------------------------
             public:
@@ -143,8 +124,6 @@ namespace GEOC
                 /** object estimating the quantity from segmentComputer */
                 SCEstimator mySCEstimator;
 
-                LambdaFunction lambdaFunction;
-
                 // ------------------------- Internal services ------------------------------
 
 
@@ -155,7 +134,7 @@ namespace GEOC
                  * @param other the object to clone.
                  * Forbidden by default.
                  */
-                DCALambdaEstimator(const DCALambdaEstimator &other);
+                HMDCAEstimator(const HMDCAEstimator &other);
 
                 /**
                  * Assignment.
@@ -163,14 +142,14 @@ namespace GEOC
                  * @return a reference on 'this'.
                  * Forbidden by default.
                  */
-                DCALambdaEstimator &operator=(const DCALambdaEstimator &other);
+                HMDCAEstimator &operator=(const HMDCAEstimator &other);
+
 
             };
-
         }
     }
 }
 
-#include "DCALambdaEstimator.hpp"
+#include "HMDCAEstimator.hpp"
 
-#endif //GEOC_DCALAMBDA_H
+#endif //GEOC_ESTIMATOR_BASE_HMDCAESTIMATOR_H
