@@ -34,7 +34,8 @@ namespace GEOC
                             IteratorType ite,
                             std::vector<double>& estimations,
                             double h,
-                            bool ccw=true)
+                            bool ccw=true,
+                            double radius=3.0)
                 {
                     BoundingBox bb;
                     DIPaCUS::Properties::curveBoundingBox<IteratorType>(bb,itb,ite);
@@ -50,7 +51,7 @@ namespace GEOC
                     KSpace kspace;
                     kspace.init(domain.lowerBound(),domain.upperBound(),true);
 
-                    double re_convolution_kernel = 3.0; // Euclidean radius of the convolution kernel. Set by user.
+                    double re_convolution_kernel = radius; // Euclidean radius of the convolution kernel. Set by user.
 
 
                     typedef DGtal::functors::IICurvatureFunctor<DGtal::Z2i::Space> MyIICurvatureFunctor;
