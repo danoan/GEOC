@@ -6,6 +6,9 @@ find_package(OpenCV REQUIRED)
 
 add_executable(testGeoc testGeoc.cpp src/testConvergence.cpp)
 
+if(${USE_LOCAL_REPOSITORIES})
+    add_dependencies(testGeoc dipacus gcurve geoc-api)
+endif()
 
 target_include_directories(testGeoc PUBLIC
         include

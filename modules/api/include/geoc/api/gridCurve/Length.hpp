@@ -48,7 +48,7 @@ namespace GEOC
                               EstimationsVector& ev,
                               double h=1.0)
                 {
-                    typedef GEOC::Adapter::GeneralAdapter::Identity<CurveIterator,
+                    typedef GEOC::Adapter::GeneralAdapter::Symmetric<CurveIterator,
                             GEOC::Estimator::Standard::MDSSTangent,
                             true> TangentAdapter;
                     TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h);
@@ -74,7 +74,7 @@ namespace GEOC
                                 EstimationsVector& ev,
                                 double h=1.0)
                 {
-                    typedef GEOC::Adapter::GeneralAdapter::Identity<CurveIterator,
+                    typedef GEOC::Adapter::GeneralAdapter::Symmetric<CurveIterator,
                             GEOC::Estimator::Alternative::LMDSSTangent,
                             true> TangentAdapter;
                     TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h);

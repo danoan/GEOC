@@ -5,6 +5,8 @@ find_package(DGtal REQUIRED)
 
 add_library(geoc-api INTERFACE)
 
+add_dependencies(geoc-api geoc-adapter geoc-estimator)
+
 target_include_directories(geoc-api INTERFACE
         include
         ${CMAKE_SOURCE_DIR}/modules/adapter/include

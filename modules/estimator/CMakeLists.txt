@@ -5,6 +5,10 @@ find_package(DGtal REQUIRED)
 
 add_library(geoc-estimator INTERFACE)
 
+if(${USE_LOCAL_REPOSITORIES})
+    add_dependencies(geoc-estimator dipacus gcurve)
+endif()
+
 target_include_directories(geoc-estimator INTERFACE
         include
         ${DIPACUS_INCLUDE_DIRS}
