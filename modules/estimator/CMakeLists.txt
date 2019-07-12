@@ -5,7 +5,7 @@ find_package(DGtal REQUIRED)
 
 add_library(geoc-estimator INTERFACE)
 
-if(${USE_LOCAL_REPOSITORIES})
+if(${USE_REMOTE_REPOSITORIES})
     add_dependencies(geoc-estimator dipacus gcurve)
 endif()
 

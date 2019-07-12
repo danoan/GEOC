@@ -5,7 +5,7 @@ find_package(DGtal REQUIRED)
 
 add_library(geoc-adapter INTERFACE)
 
-if(${USE_LOCAL_REPOSITORIES})
+if(${USE_REMOTE_REPOSITORIES})
     add_dependencies(geoc-adapter dipacus gcurve)
 endif()
 
