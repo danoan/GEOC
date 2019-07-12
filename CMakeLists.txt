@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
 
-project(geoc)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/install")
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
@@ -17,6 +16,8 @@ set(GCURVE_LIBS_DIR ${CMAKE_SOURCE_DIR}/ext-projects/build/lib CACHE PATH "DIPaC
 set(BUILD_TESTS OFF CACHE BOOL "Build tests.")
 set(USE_REMOTE_REPOSITORIES ON CACHE BOOL "Pull external repositories from GitHub.")
 
+
+project(geoc)
 
 message("Project Root Dir: ${CMAKE_SOURCE_DIR}")
 message("Build files at: ${CMAKE_BINARY_DIR}")
