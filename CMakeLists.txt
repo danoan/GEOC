@@ -47,8 +47,11 @@ link_directories(${CMAKE_BINARY_DIR}/modules/estimator
 add_subdirectory(modules/estimator)
 add_subdirectory(modules/adapter)
 add_subdirectory(modules/api)
-add_subdirectory(app)
 
 if (${BUILD_TESTS})
     add_subdirectory(lab/test)
+endif()
+
+if (${BUILD_APPS})
+    add_subdirectory(app)
 endif()
