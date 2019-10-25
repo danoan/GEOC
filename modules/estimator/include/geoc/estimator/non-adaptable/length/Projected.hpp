@@ -31,10 +31,11 @@ namespace GEOC
                                 MyIterator end,
                                 const KSpace& KImage,
                                 std::vector< EstimationValue >& estimations,
-                                double h)
+                                double h,
+                                void* data)
                 {
                     std::vector< MyTangentValue > tangentEstimations;
-                    MyTangentAdapter(begin,end,KImage,tangentEstimations,h);
+                    MyTangentAdapter(begin,end,KImage,tangentEstimations,h,data);
 
                     Point pTarget,pSource,scellVector;
                     auto it = begin;

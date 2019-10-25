@@ -20,7 +20,8 @@ namespace GEOC
                 MDCACurvature(IteratorType itb,
                               IteratorType ite,
                               std::vector<double>& estimations,
-                              double h)
+                              double h,
+                              void* data)
                 {
                     SegmentComputer sc;
                     SCEstimator f;

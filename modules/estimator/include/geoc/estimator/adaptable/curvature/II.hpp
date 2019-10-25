@@ -18,6 +18,15 @@ namespace GEOC
     {
         namespace Standard
         {
+            struct IICurvatureExtraData
+            {
+                IICurvatureExtraData():ccw(true),radius(3.0){}
+                IICurvatureExtraData(bool ccw,double radius):ccw(ccw),radius(radius){}
+
+                bool ccw;
+                double radius;
+            };
+
             template<typename IteratorType>
             struct IICurvature
             {
@@ -34,9 +43,11 @@ namespace GEOC
                             IteratorType ite,
                             std::vector<double>& estimations,
                             double h,
-                            bool ccw=true,
-                            double radius=3.0)
+                            void* data)
                 {
+                    IICurvatureExtraData castData;
+                    if(data!=NULL) castData = *( (IICurvatureExtraData*) data);
+
                     BoundingBox bb;
                     DIPaCUS::Properties::curveBoundingBox<IteratorType>(bb,itb,ite);
 
@@ -46,12 +57,12 @@ namespace GEOC
                     Domain domain(bb.lb + DGtal::Z2i::Point(-2,-2),bb.ub+ DGtal::Z2i::Point(2,2));
                     DigitalSet digShape(domain);
 
-                    DIPaCUS::Misc::compactSetFromClosedCurve(digShape,itb,ite,ccw);
+                    DIPaCUS::Misc::compactSetFromClosedCurve(digShape,itb,ite,castData.ccw);
 
                     KSpace kspace;
                     kspace.init(domain.lowerBound(),domain.upperBound(),true);
 
-                    double re_convolution_kernel = radius; // Euclidean radius of the convolution kernel. Set by user.
+                    double re_convolution_kernel = castData.radius; // Euclidean radius of the convolution kernel. Set by user.
 
 
                     typedef DGtal::functors::IICurvatureFunctor<DGtal::Z2i::Space> MyIICurvatureFunctor;

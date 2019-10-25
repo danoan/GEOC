@@ -11,7 +11,7 @@
 
 struct InputData
 {
-    enum class Estimator{MDCA,II,LENGTH_PROJECTION,LENGTH_SIN};
+    enum class Estimator{ISC_MDCA,ISC_II,LENGTH_PROJECTION,LENGTH_SIN};
     enum class Mode{AllInFolder,SingleImage,Shape};
     enum class Shape{Triangle,Square,Flower,Ball,Bean};
 
@@ -22,7 +22,7 @@ struct InputData
 
         mode=Mode::Shape;
         shape=Shape::Triangle;
-        estimator=Estimator::MDCA;
+        estimator=Estimator::ISC_MDCA;
 
         gridStep = 1.0;
     }
@@ -34,6 +34,7 @@ struct InputData
             case Mode::Shape: return "shape";
             case Mode::AllInFolder: return "all-in-folder";
             case Mode::SingleImage: return "single-image";
+            default: return "Not recognized:";
         }
     }
 
@@ -41,10 +42,11 @@ struct InputData
     {
         switch(estimator)
         {
-            case Estimator::MDCA: return "mdca";
-            case Estimator::II: return "ii";
+            case Estimator::ISC_MDCA: return "mdca";
+            case Estimator::ISC_II: return "ii";
             case Estimator::LENGTH_PROJECTION: return "length-projection";
             case Estimator::LENGTH_SIN: return "length-sin";
+            default: return "Not recognized:";
         }
     }
 
@@ -57,6 +59,7 @@ struct InputData
             case Shape::Flower: return "flower";
             case Shape::Ball: return "ball";
             case Shape::Bean: return "bean";
+            default: return "Not recognized:";
         }
     }
 
@@ -72,11 +75,11 @@ struct InputData
 
 void usage(int argc, char* argv[])
 {
-    std::cerr << "Usage " << argv[0] << ":"
+    std::cerr << "Usage " << argv[0] << ":\n"
     << "[-m] Mode (shape,all-in-folder, single-image)\n"
     << "[-s] Shape (triangle square flower ball bean)\n"
     << "[-f] Image/Folder path\n"
-    << "[-e] Estimator (mdca,ii,length-projection,length-sin)\n"
+    << "[-e] Estimator (isc-mdca,isc-ii,length-projection,length-sin)\n"
     << "[-h] Grid Step\n"
     << "[-o] OutputFilepath \n";
 }
@@ -121,8 +124,8 @@ InputData readInput(int argc, char* argv[])
             }
             case 'e':
             {
-                if(strcmp(optarg,"mdca")==0) id.estimator= InputData::Estimator::MDCA;
-                else if(strcmp(optarg,"ii")==0) id.estimator = InputData::Estimator::II;
+                if(strcmp(optarg,"isc-mdca")==0) id.estimator= InputData::Estimator::ISC_MDCA;
+                else if(strcmp(optarg,"isc-ii")==0) id.estimator = InputData::Estimator::ISC_II;
                 else if(strcmp(optarg,"length-projection")==0) id.estimator = InputData::Estimator::LENGTH_PROJECTION;
                 else if(strcmp(optarg,"length-sin")==0) id.estimator = InputData::Estimator::LENGTH_SIN;
                 else throw std::runtime_error("Estimator not recognized.");
@@ -162,6 +165,7 @@ DigitalSet resolveShape(InputData::Shape shape,double gridStep)
         case InputData::Shape::Flower: return DIPaCUS::Shapes::flower(gridStep);
         case InputData::Shape::Ball: return DIPaCUS::Shapes::ball(gridStep);
         case InputData::Shape::Bean: return DIPaCUS::Shapes::bean(gridStep);
+        default: throw std::runtime_error("Shape not recognized!");
     }
 }
 
@@ -171,42 +175,53 @@ double runEstimation(const DigitalSet& ds, InputData::Estimator& estimator, doub
     typedef DGtal::Z2i::Curve Curve;
 
     Curve curve;
-    std::vector<double> ev;
+    std::vector<double> evK;
+    std::vector<double> evS;
 
     DIPaCUS::Misc::computeBoundaryCurve(curve,ds);
     KSpace kspace;
     kspace.init(ds.domain().lowerBound(),ds.domain().upperBound(),true);
 
+    GEOC::Estimator::Standard::IICurvatureExtraData iiData(true,5.0);
+    double v=0;
     switch(estimator)
     {
-        case InputData::Estimator::MDCA:
+        case InputData::Estimator::ISC_MDCA:
         {
-            using namespace GEOC::API::GridCurve::Curvature;
-            symmetricClosed<EstimationAlgorithms::ALG_MDCA>(kspace,curve.begin(),curve.end(),ev,gridStep);
+            using namespace GEOC::API::GridCurve;
+            Curvature::symmetricClosed<Curvature::EstimationAlgorithms::ALG_MDCA>(kspace,curve.begin(),curve.end(),evK,gridStep,&iiData);
+            Length::mdssClosed<Length::EstimationAlgorithms::ALG_PROJECTED>(kspace,curve.begin(),curve.end(),evS,gridStep,NULL);
+
+            for( auto i=0;i<evK.size();++i ) v+= pow(evK[i],2)*evS[i];
             break;
         }
-        case InputData::Estimator::II:
+        case InputData::Estimator::ISC_II:
         {
-            using namespace GEOC::API::GridCurve::Curvature;
-            identityOpen<EstimationAlgorithms::ALG_II>(kspace,curve.begin(),curve.end(),ev,gridStep);
+            using namespace GEOC::API::GridCurve;
+            Curvature::identityOpen<Curvature::EstimationAlgorithms::ALG_II>(kspace,curve.begin(),curve.end(),evK,gridStep,&iiData);
+            Length::mdssClosed<Length::EstimationAlgorithms::ALG_PROJECTED>(kspace,curve.begin(),curve.end(),evS,gridStep,NULL);
+
+            for( auto i=0;i<evK.size();++i ) v+= pow(evK[i],2)*evS[i];
             break;
         }
         case InputData::Estimator::LENGTH_PROJECTION:
         {
             using namespace GEOC::API::GridCurve::Length;
-            mdssClosed<EstimationAlgorithms::ALG_PROJECTED>(kspace,curve.begin(),curve.end(),ev,gridStep);
+            mdssClosed<EstimationAlgorithms::ALG_PROJECTED>(kspace,curve.begin(),curve.end(),evS,gridStep,NULL);
+            for( double x:evS ) v+=x;
             break;
         }
         case InputData::Estimator::LENGTH_SIN:
         {
             using namespace GEOC::API::GridCurve::Length;
-            mdssClosed<EstimationAlgorithms::ALG_SINCOS>(kspace,curve.begin(),curve.end(),ev,gridStep);
+            mdssClosed<EstimationAlgorithms::ALG_SINCOS>(kspace,curve.begin(),curve.end(),evS,gridStep,NULL);
+            for( double x:evS ) v+=x;
             break;
         }
     }
 
-    double v=0;
-    for( double x:ev ) v+=x;
+
+
     return v;
 }
 

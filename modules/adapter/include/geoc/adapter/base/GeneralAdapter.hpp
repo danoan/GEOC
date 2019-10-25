@@ -7,7 +7,8 @@ Identity< TIterator, TEstimator, closedCurve>::Identity(MyIterator begin,
                                                         MyIterator end,
                                                         const KSpace& KImage,
                                                         std::vector<EstimationValue>& estimations,
-                                                        double h)
+                                                        double h,
+                                                        void* data)
 {
     AdapterFunctor myFunctor(KImage);
     MyRangeAdapter range(begin,
@@ -16,7 +17,8 @@ Identity< TIterator, TEstimator, closedCurve>::Identity(MyIterator begin,
 
     MyEstimator(range,
                 estimations,
-                h);
+                h,
+                data);
 
 };
 
@@ -25,7 +27,8 @@ Symmetric< TIterator, TEstimator, closedCurve>::Symmetric(TIterator begin,
                                                           TIterator end,
                                                           const KSpace& KImage,
                                                           std::vector<EstimationValue>& estimations,
-                                                          double h)
+                                                          double h,
+                                                          void* data)
 {
     Curve inverseCurve;
     DIPaCUS::Misc::invertCurve(inverseCurve,
@@ -48,11 +51,13 @@ Symmetric< TIterator, TEstimator, closedCurve>::Symmetric(TIterator begin,
 
     MyEstimator(rangeDirectCurve,
                 directEstimations,
-                h);
+                h,
+                data);
 
     MyEstimator(rangeInverseCurve,
                 inverseEstimations,
-                h);
+                h,
+                data);
 
     int ip=0;
     int nL = inverseEstimations.size()-1;

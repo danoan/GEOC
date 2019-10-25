@@ -28,17 +28,18 @@ namespace GEOC
                              MyIterator end,
                              const KSpace &KImage,
                              std::vector<EstimationValue> &estimations,
-                             double h)
+                             double h,
+                             void* data)
                 {
                     std::vector< MyTangentValue > tangentEstimations;
-                    MyTangentAdapter(begin,end,KImage,tangentEstimations,h);
+                    MyTangentAdapter(begin,end,KImage,tangentEstimations,h,data);
 
                     auto it = begin;
                     int i = 0;
                     do
                     {
                         //1.0/(cos+sin) Length estimation
-                        estimations.push_back( 1.0/( fabs( tangentEstimations[i][0] ) + fabs( tangentEstimations[i][1] ) ) );
+                        estimations.push_back( h*1.0/( fabs( tangentEstimations[i][0] ) + fabs( tangentEstimations[i][1] ) ) );
                         ++i;
                         ++it;
                     }while(it!=end);

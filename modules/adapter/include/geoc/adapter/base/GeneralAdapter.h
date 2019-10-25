@@ -36,7 +36,8 @@ namespace GEOC
                          MyIterator end,
                          const KSpace& KImage,
                          std::vector<EstimationValue>& estimations,
-                         double h);
+                         double h,
+                         void* data);
 
             };
 
@@ -60,7 +61,8 @@ namespace GEOC
                           MyIterator end,
                           const KSpace& KImage,
                           std::vector<EstimationValue>& estimations,
-                          double h);
+                          double h,
+                          void* data);
 
             };
 

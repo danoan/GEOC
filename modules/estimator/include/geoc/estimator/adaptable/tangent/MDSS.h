@@ -22,7 +22,8 @@ namespace GEOC
                 MDSSTangent(IteratorType itb,
                             IteratorType ite,
                             std::vector< TangentVector >& estimations,
-                            double h)
+                            double h,
+                            void* data)
                 {
                     SegmentComputer sc;
                     SCEstimator f;

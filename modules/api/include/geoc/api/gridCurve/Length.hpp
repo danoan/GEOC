@@ -33,12 +33,13 @@ namespace GEOC
                                    CurveIterator begin,
                                    CurveIterator end,
                                    EstimationsVector& ev,
-                                   double h=1.0)
+                                   double h,
+                                   void* data)
                 {
                     typedef GEOC::Adapter::GeneralAdapter::Identity<CurveIterator,
                             GEOC::Estimator::Standard::MDSSTangent,
                             false> TangentAdapter;
-                    TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h);
+                    TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h,data);
                 }
 
                 template< template<typename> class TAlgorithm>
@@ -46,12 +47,13 @@ namespace GEOC
                               CurveIterator begin,
                               CurveIterator end,
                               EstimationsVector& ev,
-                              double h=1.0)
+                              double h,
+                              void* data)
                 {
                     typedef GEOC::Adapter::GeneralAdapter::Symmetric<CurveIterator,
                             GEOC::Estimator::Standard::MDSSTangent,
                             true> TangentAdapter;
-                    TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h);
+                    TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h,data);
                 }
 
                 template< template<typename> class TAlgorithm>
@@ -59,12 +61,13 @@ namespace GEOC
                                 CurveIterator begin,
                                 CurveIterator end,
                                 EstimationsVector& ev,
-                                double h=1.0)
+                                double h,
+                               void* data)
                 {
                     typedef GEOC::Adapter::GeneralAdapter::Identity<CurveIterator,
                             GEOC::Estimator::Alternative::LMDSSTangent,
                             false> TangentAdapter;
-                    TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h);
+                    TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h,data);
                 }
 
                 template< template<typename> class TAlgorithm>
@@ -72,12 +75,13 @@ namespace GEOC
                                 CurveIterator begin,
                                 CurveIterator end,
                                 EstimationsVector& ev,
-                                double h=1.0)
+                                double h,
+                                 void* data)
                 {
                     typedef GEOC::Adapter::GeneralAdapter::Symmetric<CurveIterator,
                             GEOC::Estimator::Alternative::LMDSSTangent,
                             true> TangentAdapter;
-                    TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h);
+                    TAlgorithm<TangentAdapter>(begin,end,KImage,ev,h,data);
                 }
 
             }

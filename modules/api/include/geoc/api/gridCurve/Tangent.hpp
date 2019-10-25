@@ -34,9 +34,10 @@ namespace GEOC
                                    CurveIterator begin,
                                    CurveIterator end,
                                    EstimationsVector& ev,
-                                   double h=1.0)
+                                   double h,
+                                   void* data)
                 {
-                    GEOC::Adapter::GridCurve::Symmetric< TAlgorithm,false>(begin,end,KImage,ev,h);
+                    GEOC::Adapter::GridCurve::Symmetric< TAlgorithm,false>(begin,end,KImage,ev,h,data);
                 }
 
                 template< template<typename> class TAlgorithm>
@@ -44,9 +45,10 @@ namespace GEOC
                                      CurveIterator begin,
                                      CurveIterator end,
                                      EstimationsVector& ev,
-                                     double h=1.0)
+                                     double h,
+                                     void* data)
                 {
-                    GEOC::Adapter::GridCurve::Symmetric< TAlgorithm,true>(begin,end,KImage,ev,h);
+                    GEOC::Adapter::GridCurve::Symmetric< TAlgorithm,true>(begin,end,KImage,ev,h,data);
                 }
 
 
