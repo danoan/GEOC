@@ -25,6 +25,7 @@ struct InputData
         estimator=Estimator::ISC_MDCA;
 
         gridStep = 1.0;
+        radius = 5.0;
     }
 
     std::string resolve(Mode mode) const
@@ -71,6 +72,7 @@ struct InputData
     Estimator estimator;
 
     double gridStep;
+    double radius;
 };
 
 void usage(int argc, char* argv[])
@@ -81,6 +83,7 @@ void usage(int argc, char* argv[])
     << "[-f] Image/Folder path\n"
     << "[-e] Estimator (isc-mdca,isc-ii,length-projection,length-sin)\n"
     << "[-h] Grid Step\n"
+    << "[-r] II estimation ball radius\n"
     << "[-o] OutputFilepath \n";
 }
 
@@ -95,7 +98,7 @@ InputData readInput(int argc, char* argv[])
     InputData id;
 
     int opt;
-    while( ( opt=getopt(argc,argv,"m:s:f:e:h:o:") )!=-1 )
+    while( ( opt=getopt(argc,argv,"m:s:f:e:h:o:r:") )!=-1 )
     {
         switch(opt)
         {
@@ -136,6 +139,11 @@ InputData readInput(int argc, char* argv[])
                 id.gridStep=std::atof(optarg);
                 break;
             }
+            case 'r':
+            {
+                id.radius=std::atof(optarg);
+                break;
+            }
             case 'o':
             {
                 id.outputPath = optarg;
@@ -169,7 +177,7 @@ DigitalSet resolveShape(InputData::Shape shape,double gridStep)
     }
 }
 
-double runEstimation(const DigitalSet& ds, InputData::Estimator& estimator, double gridStep)
+double runEstimation(const DigitalSet& ds, InputData::Estimator& estimator, double gridStep, double radius)
 {
     typedef DGtal::Z2i::KSpace KSpace;
     typedef DGtal::Z2i::Curve Curve;
@@ -182,7 +190,7 @@ double runEstimation(const DigitalSet& ds, InputData::Estimator& estimator, doub
     KSpace kspace;
     kspace.init(ds.domain().lowerBound(),ds.domain().upperBound(),true);
 
-    GEOC::Estimator::Standard::IICurvatureExtraData iiData(true,5.0);
+    GEOC::Estimator::Standard::IICurvatureExtraData iiData(true,radius);
     double v=0;
     switch(estimator)
     {
@@ -242,7 +250,8 @@ void writeInputData(std::ostream& ofs, const InputData& id)
     << "Mode: " << id.resolve(id.mode) << "\n"
     << "Shape: " << id.resolve(id.shape) << "\n"
     << "Estimator: " << id.resolve(id.estimator) << "\n"
-    << "Grid Step: " << id.gridStep << "\n\n";
+    << "Grid Step: " << id.gridStep << "\n"
+    << "Radius: " << id.radius << "\n\n";
 }
 
 void writeEstimationValue(std::ostream& ofs, const std::string& name, double value)
@@ -272,13 +281,13 @@ int main(int argc, char* argv[])
     {
         case InputData::Mode::Shape:
         {
-            v=runEstimation(resolveShape(id.shape,id.gridStep),id.estimator,id.gridStep);
+            v=runEstimation(resolveShape(id.shape,id.gridStep),id.estimator,id.gridStep,id.radius);
             writeEstimationValue(*ofs,"Shape",v);
             break;
         }
         case InputData::Mode::SingleImage:
         {
-            v=runEstimation(digitalSetFromImagePath(id.inputPath),id.estimator,id.gridStep);
+            v=runEstimation(digitalSetFromImagePath(id.inputPath),id.estimator,id.gridStep,id.radius);
             writeEstimationValue(*ofs,"Single-Image",v);
             break;
         }
@@ -292,7 +301,7 @@ int main(int argc, char* argv[])
                 if(is_regular_file(*di))
                 {
                     path curr_path = di->path();
-                    v=runEstimation(digitalSetFromImagePath(curr_path.string()),id.estimator,id.gridStep);
+                    v=runEstimation(digitalSetFromImagePath(curr_path.string()),id.estimator,id.gridStep,id.radius);
                     writeEstimationValue(*ofs,curr_path.filename().string(),v);
                 }
                 ++di;
