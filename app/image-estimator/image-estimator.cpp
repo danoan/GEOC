@@ -11,7 +11,7 @@
 
 struct InputData
 {
-    enum class Estimator{ISC_MDCA,ISC_II,LENGTH_PROJECTION,LENGTH_SIN};
+    enum class Estimator{ISC_MDCA,ISC_II,SQC_MDCA,SQC_II,LENGTH_PROJECTION,LENGTH_SIN};
     enum class Mode{AllInFolder,SingleImage,Shape};
     enum class Shape{Triangle,Square,Flower,Ball,Bean};
 
@@ -26,6 +26,7 @@ struct InputData
 
         gridStep = 1.0;
         radius = 5.0;
+        lengthPenalization=0;
     }
 
     std::string resolve(Mode mode) const
@@ -73,6 +74,7 @@ struct InputData
 
     double gridStep;
     double radius;
+    double lengthPenalization;
 };
 
 void usage(int argc, char* argv[])
@@ -81,9 +83,10 @@ void usage(int argc, char* argv[])
     << "[-m] Mode (shape,all-in-folder, single-image)\n"
     << "[-s] Shape (triangle square flower ball bean)\n"
     << "[-f] Image/Folder path\n"
-    << "[-e] Estimator (isc-mdca,isc-ii,length-projection,length-sin)\n"
+    << "[-e] Estimator (isc-mdca,isc-ii,sqc-mdca,sqc-ii,length-projection,length-sin)\n"
     << "[-h] Grid Step\n"
     << "[-r] II estimation ball radius\n"
+    << "[-a] Length penalization (SQC)\n"
     << "[-o] OutputFilepath \n";
 }
 
@@ -98,7 +101,7 @@ InputData readInput(int argc, char* argv[])
     InputData id;
 
     int opt;
-    while( ( opt=getopt(argc,argv,"m:s:f:e:h:o:r:") )!=-1 )
+    while( ( opt=getopt(argc,argv,"m:s:f:e:h:o:r:a:") )!=-1 )
     {
         switch(opt)
         {
@@ -129,6 +132,8 @@ InputData readInput(int argc, char* argv[])
             {
                 if(strcmp(optarg,"isc-mdca")==0) id.estimator= InputData::Estimator::ISC_MDCA;
                 else if(strcmp(optarg,"isc-ii")==0) id.estimator = InputData::Estimator::ISC_II;
+                else if(strcmp(optarg,"sqc-mdca")==0) id.estimator = InputData::Estimator::SQC_MDCA;
+                else if(strcmp(optarg,"sqc-ii")==0) id.estimator = InputData::Estimator::SQC_II;
                 else if(strcmp(optarg,"length-projection")==0) id.estimator = InputData::Estimator::LENGTH_PROJECTION;
                 else if(strcmp(optarg,"length-sin")==0) id.estimator = InputData::Estimator::LENGTH_SIN;
                 else throw std::runtime_error("Estimator not recognized.");
@@ -142,6 +147,11 @@ InputData readInput(int argc, char* argv[])
             case 'r':
             {
                 id.radius=std::atof(optarg);
+                break;
+            }
+            case 'a':
+            {
+                id.lengthPenalization=std::atof(optarg);
                 break;
             }
             case 'o':
@@ -177,7 +187,7 @@ DigitalSet resolveShape(InputData::Shape shape,double gridStep)
     }
 }
 
-double runEstimation(const DigitalSet& ds, InputData::Estimator& estimator, double gridStep, double radius)
+double runEstimation(const DigitalSet& ds, InputData::Estimator& estimator, double gridStep, double radius,double lengthPenalization)
 {
     typedef DGtal::Z2i::KSpace KSpace;
     typedef DGtal::Z2i::Curve Curve;
@@ -210,6 +220,24 @@ double runEstimation(const DigitalSet& ds, InputData::Estimator& estimator, doub
             Length::mdssClosed<Length::EstimationAlgorithms::ALG_PROJECTED>(kspace,curve.begin(),curve.end(),evS,gridStep,NULL);
 
             for( auto i=0;i<evK.size();++i ) v+= pow(evK[i],2)*evS[i];
+            break;
+        }
+        case InputData::Estimator::SQC_MDCA:
+        {
+            using namespace GEOC::API::GridCurve;
+            Curvature::symmetricClosed<Curvature::EstimationAlgorithms::ALG_MDCA>(kspace,curve.begin(),curve.end(),evK,gridStep,&iiData);
+            Length::mdssClosed<Length::EstimationAlgorithms::ALG_PROJECTED>(kspace,curve.begin(),curve.end(),evS,gridStep,NULL);
+
+            for( auto i=0;i<evK.size();++i ) v+= gridStep*pow(evK[i],2) + lengthPenalization*evS[i];
+            break;
+        }
+        case InputData::Estimator::SQC_II:
+        {
+            using namespace GEOC::API::GridCurve;
+            Curvature::identityOpen<Curvature::EstimationAlgorithms::ALG_II>(kspace,curve.begin(),curve.end(),evK,gridStep,&iiData);
+            Length::mdssClosed<Length::EstimationAlgorithms::ALG_PROJECTED>(kspace,curve.begin(),curve.end(),evS,gridStep,NULL);
+
+            for( auto i=0;i<evK.size();++i ) v+= gridStep*pow(evK[i],2) + lengthPenalization*evS[i];
             break;
         }
         case InputData::Estimator::LENGTH_PROJECTION:
@@ -281,13 +309,13 @@ int main(int argc, char* argv[])
     {
         case InputData::Mode::Shape:
         {
-            v=runEstimation(resolveShape(id.shape,id.gridStep),id.estimator,id.gridStep,id.radius);
+            v=runEstimation(resolveShape(id.shape,id.gridStep),id.estimator,id.gridStep,id.radius,id.lengthPenalization);
             writeEstimationValue(*ofs,"Shape",v);
             break;
         }
         case InputData::Mode::SingleImage:
         {
-            v=runEstimation(digitalSetFromImagePath(id.inputPath),id.estimator,id.gridStep,id.radius);
+            v=runEstimation(digitalSetFromImagePath(id.inputPath),id.estimator,id.gridStep,id.radius,id.lengthPenalization);
             writeEstimationValue(*ofs,"Single-Image",v);
             break;
         }
@@ -301,7 +329,7 @@ int main(int argc, char* argv[])
                 if(is_regular_file(*di))
                 {
                     path curr_path = di->path();
-                    v=runEstimation(digitalSetFromImagePath(curr_path.string()),id.estimator,id.gridStep,id.radius);
+                    v=runEstimation(digitalSetFromImagePath(curr_path.string()),id.estimator,id.gridStep,id.radius,id.lengthPenalization);
                     writeEstimationValue(*ofs,curr_path.filename().string(),v);
                 }
                 ++di;
