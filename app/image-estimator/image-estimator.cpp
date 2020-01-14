@@ -19,6 +19,7 @@ struct InputData
     {
         inputPath="";
         outputPath="";
+        fileExtension=".pgm";
 
         mode=Mode::Shape;
         shape=Shape::Triangle;
@@ -67,6 +68,7 @@ struct InputData
 
     std::string inputPath;
     std::string outputPath;
+    std::string fileExtension;
 
     Mode mode;
     Shape shape;
@@ -81,6 +83,7 @@ void usage(int argc, char* argv[])
 {
     std::cerr << "Usage " << argv[0] << ":\n"
     << "[-m] Mode (shape,all-in-folder, single-image)\n"
+    << "[-E] File extension to search in all-in-folder mode (default:.pgm)\n"
     << "[-s] Shape (triangle square flower ball bean)\n"
     << "[-f] Image/Folder path\n"
     << "[-e] Estimator (isc-mdca,isc-ii,sqc-mdca,sqc-ii,length-projection,length-sin)\n"
@@ -101,7 +104,7 @@ InputData readInput(int argc, char* argv[])
     InputData id;
 
     int opt;
-    while( ( opt=getopt(argc,argv,"m:s:f:e:h:o:r:a:") )!=-1 )
+    while( ( opt=getopt(argc,argv,"m:s:f:e:h:o:r:a:E:") )!=-1 )
     {
         switch(opt)
         {
@@ -111,6 +114,11 @@ InputData readInput(int argc, char* argv[])
                 else if(strcmp(optarg,"all-in-folder")==0) id.mode = InputData::Mode::AllInFolder;
                 else if(strcmp(optarg,"single-image")==0) id.mode = InputData::Mode::SingleImage;
                 else throw std::runtime_error("Mode not recognized.");
+                break;
+            }
+            case 'E':
+            {
+                id.fileExtension = optarg;
                 break;
             }
             case 's':
@@ -326,7 +334,7 @@ int main(int argc, char* argv[])
             directory_iterator di(p);
             while(di!=directory_iterator())
             {
-                if(is_regular_file(*di))
+                if(is_regular_file(*di) && boost::filesystem::extension(*di)==id.fileExtension)
                 {
                     path curr_path = di->path();
                     v=runEstimation(digitalSetFromImagePath(curr_path.string()),id.estimator,id.gridStep,id.radius,id.lengthPenalization);
