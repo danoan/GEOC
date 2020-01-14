@@ -59,6 +59,20 @@ namespace GEOC
 
                     DIPaCUS::Misc::compactSetFromClosedCurve(digShape,itb,ite,castData.ccw);
 
+                    IICurvature(digShape,itb,ite,estimations,h,data);
+                }
+
+                IICurvature(const DigitalSet& digShape,
+                            IteratorType itb,
+                            IteratorType ite,
+                            std::vector<double>& estimations,
+                            double h,
+                            void* data)
+                {
+                    IICurvatureExtraData castData;
+                    if(data!=NULL) castData = *( (IICurvatureExtraData*) data);
+
+                    const Domain& domain = digShape.domain();
                     KSpace kspace;
                     kspace.init(domain.lowerBound(),domain.upperBound(),true);
 
