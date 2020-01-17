@@ -11,7 +11,7 @@
 
 struct InputData
 {
-    enum class Estimator{ISC_MDCA,ISC_II,SQC_MDCA,SQC_II,LENGTH_PROJECTION,LENGTH_SIN};
+    enum class Estimator{ELASTICA_MDCA,ELASTICA_II,SELASTICA_MDCA,SELASTICA_II,LENGTH_PROJECTION,LENGTH_SIN};
     enum class Mode{AllInFolder,SingleImage,Shape};
     enum class Shape{Triangle,Square,Flower,Ball,Bean};
 
@@ -23,7 +23,7 @@ struct InputData
 
         mode=Mode::Shape;
         shape=Shape::Triangle;
-        estimator=Estimator::ISC_MDCA;
+        estimator=Estimator::ELASTICA_MDCA;
 
         gridStep = 1.0;
         radius = 5.0;
@@ -45,8 +45,10 @@ struct InputData
     {
         switch(estimator)
         {
-            case Estimator::ISC_MDCA: return "mdca";
-            case Estimator::ISC_II: return "ii";
+            case Estimator::ELASTICA_MDCA: return "mdca";
+            case Estimator::ELASTICA_II: return "ii";
+            case Estimator::SELASTICA_MDCA: return "mdca";
+            case Estimator::SELASTICA_II: return "ii";
             case Estimator::LENGTH_PROJECTION: return "length-projection";
             case Estimator::LENGTH_SIN: return "length-sin";
             default: return "Not recognized:";
@@ -86,7 +88,7 @@ void usage(int argc, char* argv[])
     << "[-E] File extension to search in all-in-folder mode (default:.pgm)\n"
     << "[-s] Shape (triangle square flower ball bean)\n"
     << "[-f] Image/Folder path\n"
-    << "[-e] Estimator (isc-mdca,isc-ii,sqc-mdca,sqc-ii,length-projection,length-sin)\n"
+    << "[-e] Estimator (elastica-mdca,elastica-ii,selastica-mdca,selastica-ii,length-projection,length-sin)\n"
     << "[-h] Grid Step\n"
     << "[-r] II estimation ball radius\n"
     << "[-a] Length penalization (SQC)\n"
@@ -138,10 +140,10 @@ InputData readInput(int argc, char* argv[])
             }
             case 'e':
             {
-                if(strcmp(optarg,"isc-mdca")==0) id.estimator= InputData::Estimator::ISC_MDCA;
-                else if(strcmp(optarg,"isc-ii")==0) id.estimator = InputData::Estimator::ISC_II;
-                else if(strcmp(optarg,"sqc-mdca")==0) id.estimator = InputData::Estimator::SQC_MDCA;
-                else if(strcmp(optarg,"sqc-ii")==0) id.estimator = InputData::Estimator::SQC_II;
+                if(strcmp(optarg,"elastica-mdca")==0) id.estimator= InputData::Estimator::ELASTICA_MDCA;
+                else if(strcmp(optarg,"elastica-ii")==0) id.estimator = InputData::Estimator::ELASTICA_II;
+                else if(strcmp(optarg,"selastica-mdca")==0) id.estimator = InputData::Estimator::SELASTICA_MDCA;
+                else if(strcmp(optarg,"selastica-ii")==0) id.estimator = InputData::Estimator::SELASTICA_II;
                 else if(strcmp(optarg,"length-projection")==0) id.estimator = InputData::Estimator::LENGTH_PROJECTION;
                 else if(strcmp(optarg,"length-sin")==0) id.estimator = InputData::Estimator::LENGTH_SIN;
                 else throw std::runtime_error("Estimator not recognized.");
@@ -212,40 +214,38 @@ double runEstimation(const DigitalSet& ds, InputData::Estimator& estimator, doub
     double v=0;
     switch(estimator)
     {
-        case InputData::Estimator::ISC_MDCA:
+        case InputData::Estimator::ELASTICA_MDCA:
         {
             using namespace GEOC::API::GridCurve;
             Curvature::symmetricClosed<Curvature::EstimationAlgorithms::ALG_MDCA>(kspace,curve.begin(),curve.end(),evK,gridStep,&iiData);
             Length::mdssClosed<Length::EstimationAlgorithms::ALG_PROJECTED>(kspace,curve.begin(),curve.end(),evS,gridStep,NULL);
 
-            for( auto i=0;i<evK.size();++i ) v+= pow(evK[i],2)*evS[i];
+            for( auto i=0;i<evK.size();++i ) v+= pow(evK[i],2)*evS[i] + lengthPenalization*evS[i];
             break;
         }
-        case InputData::Estimator::ISC_II:
+        case InputData::Estimator::ELASTICA_II:
         {
             using namespace GEOC::API::GridCurve;
             Curvature::identityOpen<Curvature::EstimationAlgorithms::ALG_II>(kspace,curve.begin(),curve.end(),evK,gridStep,&iiData);
             Length::mdssClosed<Length::EstimationAlgorithms::ALG_PROJECTED>(kspace,curve.begin(),curve.end(),evS,gridStep,NULL);
 
-            for( auto i=0;i<evK.size();++i ) v+= pow(evK[i],2)*evS[i];
+            for( auto i=0;i<evK.size();++i ) v+= pow(evK[i],2)*evS[i] + lengthPenalization*evS[i];
             break;
         }
-        case InputData::Estimator::SQC_MDCA:
+        case InputData::Estimator::SELASTICA_MDCA:
         {
             using namespace GEOC::API::GridCurve;
             Curvature::symmetricClosed<Curvature::EstimationAlgorithms::ALG_MDCA>(kspace,curve.begin(),curve.end(),evK,gridStep,&iiData);
-            Length::mdssClosed<Length::EstimationAlgorithms::ALG_PROJECTED>(kspace,curve.begin(),curve.end(),evS,gridStep,NULL);
 
-            for( auto i=0;i<evK.size();++i ) v+= gridStep*pow(evK[i],2) + lengthPenalization*evS[i];
+            for( auto i=0;i<evK.size();++i ) v+= gridStep*pow(evK[i],2) + lengthPenalization*gridStep;
             break;
         }
-        case InputData::Estimator::SQC_II:
+        case InputData::Estimator::SELASTICA_II:
         {
             using namespace GEOC::API::GridCurve;
             Curvature::identityOpen<Curvature::EstimationAlgorithms::ALG_II>(kspace,curve.begin(),curve.end(),evK,gridStep,&iiData);
-            Length::mdssClosed<Length::EstimationAlgorithms::ALG_PROJECTED>(kspace,curve.begin(),curve.end(),evS,gridStep,NULL);
 
-            for( auto i=0;i<evK.size();++i ) v+= gridStep*pow(evK[i],2) + lengthPenalization*evS[i];
+            for( auto i=0;i<evK.size();++i ) v+= gridStep*pow(evK[i],2) + lengthPenalization*gridStep;
             break;
         }
         case InputData::Estimator::LENGTH_PROJECTION:
