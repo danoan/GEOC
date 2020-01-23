@@ -187,7 +187,7 @@ DigitalSet resolveShape(InputData::Shape shape,double gridStep)
     }
 }
 
-double runEstimation(const DigitalSet& ds, InputData::Estimator& estimator, double gridStep, double radius,double lengthPenalization)
+double runEstimation(const DigitalSet& _ds, InputData::Estimator& estimator, double gridStep, double radius,double lengthPenalization)
 {
     typedef DGtal::Z2i::KSpace KSpace;
     typedef DGtal::Z2i::Curve Curve;
@@ -195,6 +195,8 @@ double runEstimation(const DigitalSet& ds, InputData::Estimator& estimator, doub
     Curve curve;
     std::vector<double> evK;
     std::vector<double> evS;
+
+    DigitalSet ds = DIPaCUS::Misc::cleanSet(_ds);
 
     DIPaCUS::Misc::computeBoundaryCurve(curve,ds);
     KSpace kspace;
