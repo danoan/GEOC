@@ -19,6 +19,7 @@ struct InputData
     {
         inputPath="";
         outputPath="";
+        fileExtension=".pgm";
 
         mode=Mode::Shape;
         shape=Shape::Triangle;
@@ -67,6 +68,7 @@ struct InputData
 
     std::string inputPath;
     std::string outputPath;
+    std::string fileExtension;
 
     Mode mode;
     Shape shape;
@@ -80,14 +82,15 @@ struct InputData
 void usage(int argc, char* argv[])
 {
     std::cerr << "Usage " << argv[0] << ":\n"
-    << "[-m] Mode (shape,all-in-folder, single-image)\n"
-    << "[-s] Shape (triangle square flower ball bean)\n"
-    << "[-f] Image/Folder path\n"
-    << "[-e] Estimator (isc-mdca,isc-ii,sqc-mdca,sqc-ii,length-projection,length-sin)\n"
-    << "[-h] Grid Step\n"
-    << "[-r] II estimation ball radius\n"
-    << "[-a] Length penalization (SQC)\n"
-    << "[-o] OutputFilepath \n";
+              << "[-m] Mode (shape,all-in-folder, single-image)\n"
+              << "[-E] File extension to search in all-in-folder mode (default:.pgm)\n"
+              << "[-s] Shape (triangle square flower ball bean)\n"
+              << "[-f] Image/Folder path\n"
+              << "[-e] Estimator (isc-mdca,isc-ii,sqc-mdca,sqc-ii,length-projection,length-sin)\n"
+              << "[-h] Grid Step\n"
+              << "[-r] II estimation ball radius\n"
+              << "[-a] Length penalization (SQC)\n"
+              << "[-o] OutputFilepath \n";
 }
 
 InputData readInput(int argc, char* argv[])
@@ -101,7 +104,7 @@ InputData readInput(int argc, char* argv[])
     InputData id;
 
     int opt;
-    while( ( opt=getopt(argc,argv,"m:s:f:e:h:o:r:a:") )!=-1 )
+    while( ( opt=getopt(argc,argv,"m:s:f:e:h:o:r:a:E:") )!=-1 )
     {
         switch(opt)
         {
@@ -111,6 +114,11 @@ InputData readInput(int argc, char* argv[])
                 else if(strcmp(optarg,"all-in-folder")==0) id.mode = InputData::Mode::AllInFolder;
                 else if(strcmp(optarg,"single-image")==0) id.mode = InputData::Mode::SingleImage;
                 else throw std::runtime_error("Mode not recognized.");
+                break;
+            }
+            case 'E':
+            {
+                id.fileExtension = optarg;
                 break;
             }
             case 's':
@@ -192,11 +200,11 @@ double runEstimation(const DigitalSet& _ds, InputData::Estimator& estimator, dou
     typedef DGtal::Z2i::KSpace KSpace;
     typedef DGtal::Z2i::Curve Curve;
 
+    DigitalSet ds = DIPaCUS::Misc::cleanSet(_ds);
+
     Curve curve;
     std::vector<double> evK;
     std::vector<double> evS;
-
-    DigitalSet ds = DIPaCUS::Misc::cleanSet(_ds);
 
     DIPaCUS::Misc::computeBoundaryCurve(curve,ds);
     KSpace kspace;
@@ -276,12 +284,12 @@ DigitalSet digitalSetFromImagePath(const std::string& imagePath)
 void writeInputData(std::ostream& ofs, const InputData& id)
 {
     ofs << "Input Path: " << id.inputPath << "\n"
-    << "Output Path: " << id.outputPath << "\n"
-    << "Mode: " << id.resolve(id.mode) << "\n"
-    << "Shape: " << id.resolve(id.shape) << "\n"
-    << "Estimator: " << id.resolve(id.estimator) << "\n"
-    << "Grid Step: " << id.gridStep << "\n"
-    << "Radius: " << id.radius << "\n\n";
+        << "Output Path: " << id.outputPath << "\n"
+        << "Mode: " << id.resolve(id.mode) << "\n"
+        << "Shape: " << id.resolve(id.shape) << "\n"
+        << "Estimator: " << id.resolve(id.estimator) << "\n"
+        << "Grid Step: " << id.gridStep << "\n"
+        << "Radius: " << id.radius << "\n\n";
 }
 
 void writeEstimationValue(std::ostream& ofs, const std::string& name, double value)
@@ -328,7 +336,7 @@ int main(int argc, char* argv[])
             directory_iterator di(p);
             while(di!=directory_iterator())
             {
-                if(is_regular_file(*di))
+                if(is_regular_file(*di) && boost::filesystem::extension(*di)==id.fileExtension)
                 {
                     path curr_path = di->path();
                     v=runEstimation(digitalSetFromImagePath(curr_path.string()),id.estimator,id.gridStep,id.radius,id.lengthPenalization);
