@@ -54,8 +54,8 @@ TestConvergence::TestConvergence(double radius, double h)
     {
         using namespace GEOC::API::GridCurve::Curvature;
 
-        symmetricClosed<EstimationAlgorithms::ALG_MDCA>(KImage,c.begin(),c.end(),estimationsMDCA,h);
-        identityOpen<EstimationAlgorithms::ALG_II>(KImage,c.begin(),c.end(),estimationsII,h);
+        symmetricClosed<EstimationAlgorithms::ALG_MDCA>(KImage,c.begin(),c.end(),estimationsMDCA,h,nullptr);
+        identityOpen<EstimationAlgorithms::ALG_II>(KImage,c.begin(),c.end(),estimationsII,h,nullptr);
     }
 
 

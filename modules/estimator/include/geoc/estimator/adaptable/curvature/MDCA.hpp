@@ -28,8 +28,8 @@ namespace GEOC
 
                     DGtal::MostCenteredMaximalSegmentEstimator<SegmentComputer,SCEstimator> MCMDCACurvatureEstimator(sc,f);
 
-                    MCMDCACurvatureEstimator.init(h,itb,ite);
-                    MCMDCACurvatureEstimator.eval(itb,ite,std::back_inserter(estimations));
+                    MCMDCACurvatureEstimator.init(itb,ite);
+                    MCMDCACurvatureEstimator.eval(itb,ite,std::back_inserter(estimations),h);
                 }
             };
         }

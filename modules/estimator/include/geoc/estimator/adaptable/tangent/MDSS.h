@@ -30,8 +30,8 @@ namespace GEOC
 
                     DGtal::MostCenteredMaximalSegmentEstimator<SegmentComputer,SCEstimator> MCMDSSTangentEstimator(sc,f);
 
-                    MCMDSSTangentEstimator.init(h,itb,ite);
-                    MCMDSSTangentEstimator.eval(itb,ite,std::back_inserter(estimations));
+                    MCMDSSTangentEstimator.init(itb,ite);
+                    MCMDSSTangentEstimator.eval(itb,ite,std::back_inserter(estimations),h);
                 }
             };
         }

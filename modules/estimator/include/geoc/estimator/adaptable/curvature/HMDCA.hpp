@@ -29,7 +29,7 @@ namespace GEOC
 
                     HMDCAEstimator<SegmentComputer,SCEstimator> PessimistMDCACurvature(sc,f);
 
-                    PessimistMDCACurvature.init(1.0,itb,ite);
+                    PessimistMDCACurvature.init(h,itb,ite);
 
                     PessimistMDCACurvature.eval(itb,ite,std::back_inserter(estimations));
                 }
